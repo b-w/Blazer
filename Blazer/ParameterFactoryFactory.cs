@@ -25,76 +25,44 @@
             //par.Value = 42;
 
             var commandType = typeof(IDbCommand);
-            var dataParameterType = typeof(IDataParameter);
-            var parametersType = parameters.GetType();
-
-            var createParamMethod = commandType.GetMethod("CreateParameter", BindingFlags_InstanceProp);
-            var paramDbTypeProperty = dataParameterType.GetProperty("DbType", BindingFlags_InstanceProp);
-            var paramDirectionProperty = dataParameterType.GetProperty("Direction", BindingFlags_InstanceProp);
-            var paramNameProperty = dataParameterType.GetProperty("ParameterName", BindingFlags_InstanceProp);
-            var paramValueProperty = dataParameterType.GetProperty("Value", BindingFlags_InstanceProp);
-
-            // (command, parameters) =>
+            var commandCreateParamMethod = commandType.GetMethod("CreateParameter", BindingFlags_InstanceProp);
             var commandParamExpr = Expression.Parameter(commandType, "command");
-            var parametersParamExpr = Expression.Parameter(typeof(object), "parameters");
+
+            var paramType = typeof(IDataParameter);
+            var paramDbTypeProperty = paramType.GetProperty("DbType", BindingFlags_InstanceProp);
+            var paramDirectionProperty = paramType.GetProperty("Direction", BindingFlags_InstanceProp);
+            var paramNameProperty = paramType.GetProperty("ParameterName", BindingFlags_InstanceProp);
+            var paramValueProperty = paramType.GetProperty("Value", BindingFlags_InstanceProp);
 
             var factoryBodyExpressions = new List<Expression>();
 
-            // var parametersTyped = (<params_type>)parameters;
+            var parametersType = parameters.GetType();
+            var untypedParamsExpr = Expression.Parameter(typeof(object), "parameters");
             var typedParamsVarExpr = Expression.Variable(parametersType);
             var typedParamsAssignExpr = Expression.Assign(
                 typedParamsVarExpr,
-                Expression.Convert(parametersParamExpr, parametersType));
+                Expression.Convert(untypedParamsExpr, parametersType));
             factoryBodyExpressions.Add(typedParamsAssignExpr);
 
-            foreach (var prop in parametersType.GetProperties(BindingFlags_InstanceProp))
+            var context = new ParameterExpressionFactory.Context()
             {
-                // IDbDataParameter dataParam;
-                var dbParamVarExpr = Expression.Variable(typeof(IDbDataParameter));
+                CommandExpr = commandParamExpr,
+                ParametersExpr = typedParamsVarExpr,
+                CreateParamMethod = commandCreateParamMethod,
+                ParamDbTypeProperty = paramDbTypeProperty,
+                ParamDirectionProperty = paramDirectionProperty,
+                ParamNameProperty = paramNameProperty,
+                ParamValueProperty = paramValueProperty
+            };
 
-                // dataParam = command.CreateParameter();
-                var createParamExpr = Expression.Assign(
-                    dbParamVarExpr,
-                    Expression.Call(commandParamExpr, createParamMethod));
-
-                // dataParam.Direction = ParameterDirection.Input;
-                var directionExpr = Expression.Assign(
-                    Expression.Property(dbParamVarExpr, paramDirectionProperty),
-                    Expression.Constant(ParameterDirection.Input));
-
-                // dataParam.DbType = <some_type>;
-                var dbTypeExpr = Expression.Assign(
-                    Expression.Property(dbParamVarExpr, paramDbTypeProperty),
-                    Expression.Constant(DbType.Int32)); // TODO: Type -> DbType mapping
-
-                // dataParam.ParameterName = "@<prop_name>";
-                var nameExpr = Expression.Assign(
-                    Expression.Property(dbParamVarExpr, paramNameProperty),
-                    Expression.Constant("@" + prop.Name));
-
-                // dataParam.Value = <prop_value>;
-                var valueExpr = Expression.Assign(
-                    Expression.Property(dbParamVarExpr, paramValueProperty),
-                    Expression.Convert(
-                        Expression.Property(typedParamsVarExpr, prop),
-                        typeof(object)));
-
-                // { ... }
-                var blockExpr = Expression.Block(
-                    new[] { dbParamVarExpr },
-                    createParamExpr,
-                    directionExpr,
-                    dbTypeExpr,
-                    nameExpr,
-                    valueExpr
-                    );
-
-                factoryBodyExpressions.Add(blockExpr);
+            foreach (var property in parametersType.GetProperties(BindingFlags_InstanceProp))
+            {
+                factoryBodyExpressions.Add(ParameterExpressionFactory.GetExpression(context, property));
             }
             var lambdaBlockExpr = Expression.Block(
                 new[] { typedParamsVarExpr },
                 factoryBodyExpressions);
-            var lambdaExpr = Expression.Lambda<ParameterFactory>(lambdaBlockExpr, commandParamExpr, parametersParamExpr);
+            var lambdaExpr = Expression.Lambda<ParameterFactory>(lambdaBlockExpr, commandParamExpr, untypedParamsExpr);
             var lambda = lambdaExpr.Compile();
 
             return lambda;

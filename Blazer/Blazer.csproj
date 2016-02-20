@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlazerExtensions.cs" />
+    <Compile Include="ParameterExpressionFactory.cs" />
     <Compile Include="ParameterFactoryFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
