@@ -20,6 +20,7 @@
         {
             var commandType = typeof(IDbCommand);
             var commandCreateParamMethod = commandType.GetMethod("CreateParameter", FLAGS_PUBINST);
+            var commandCommandTextProperty = commandType.GetProperty("CommandText", FLAGS_PUBINST);
             var commandParamExpr = Expression.Parameter(commandType, "command");
 
             var commandParamsType = typeof(IList);
@@ -46,6 +47,7 @@
             {
                 CommandExpr = commandParamExpr,
                 CommandParametersProperty = commandParamsProperty,
+                CommandCommandTextProperty = commandCommandTextProperty,
                 CommandParametersAddMethod = commandParamsAddMethod,
                 ParametersExpr = typedParamsVarExpr,
                 CreateParamMethod = commandCreateParamMethod,

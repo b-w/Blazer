@@ -10,7 +10,7 @@
         [TestMethod]
         public void TestMethod1()
         {
-            var fac = ParameterFactoryFactory.GetFactory(new { Id = 42, Name = "Bart" });
+            var fac = ParameterFactoryFactory.GetFactory(new { Id = 42, Name = "Bart", Orders = new[] { 3, 6, 8 } });
         }
     }
 }

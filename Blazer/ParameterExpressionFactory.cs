@@ -7,7 +7,7 @@
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Text;
-    using System.Threading.Tasks;
+    using System.Text.RegularExpressions;
 
     internal static class ParameterExpressionFactory
     {
@@ -29,6 +29,8 @@
 
             public MethodInfo CommandParametersAddMethod { get; set; }
 
+            public PropertyInfo CommandCommandTextProperty { get; set; }
+
             public ParameterExpression ParametersExpr { get; set; }
         }
 
@@ -40,12 +42,13 @@
                 return GetExpressionForKnownDbType(context, property, dbType);
             }
 
-            if (typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType))
+            var collectionInterfaceType = property.PropertyType.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            if (collectionInterfaceType != null)
             {
-                var innerType = property.PropertyType.GenericTypeArguments[0];
+                var innerType = collectionInterfaceType.GenericTypeArguments[0];
                 if (DbTypeMap.TryGetDbType(innerType, out dbType))
                 {
-
+                    return GetExpressionForCollectionType(context, property, innerType, dbType);
                 }
 
                 throw new NotSupportedException($"Collection parameter of type {innerType} is not supported. Only collections of known data types are supported.");
@@ -92,7 +95,6 @@
                 context.CommandParametersAddMethod,
                 dbParamVarExpr);
 
-            // { ... }
             var blockExpr = Expression.Block(
                 new[] { dbParamVarExpr },
                 createParamExpr,
@@ -106,6 +108,169 @@
             return blockExpr;
         }
 
+        static Expression GetExpressionForCollectionType(Context context, PropertyInfo property, Type collectionType, DbType dbType)
+        {
+            var propertyVariableName = "@" + property.Name;
 
+            var sbType = typeof(StringBuilder);
+            var sbAppendStringMethod = sbType.GetMethod("Append", new[] { typeof(string) });
+            var sbAppendIntMethod = sbType.GetMethod("Append", new[] { typeof(int) });
+            var sbToStringMethod = sbType.GetMethod("ToString", new Type[] { });
+            var stringConcatMethod = typeof(string).GetMethod("Concat", new[] { typeof(object), typeof(object) });
+            var rxEscapeMethod = typeof(Regex).GetMethod("Escape", new[] { typeof(string) });
+            var rxReplaceMethod = typeof(Regex).GetMethod("Replace", new[] { typeof(string), typeof(string), typeof(string) });
+
+            // StringBuilder sb;
+            var sbVarExpr = Expression.Variable(sbType);
+
+            // sb = new StringBuilder();
+            var sbNewExpr = Expression.Assign(
+                sbVarExpr,
+                Expression.New(sbType));
+
+            // sb.Append("(");
+            var sbOpenBracketExpr = Expression.Call(
+                sbVarExpr,
+                sbAppendStringMethod,
+                Expression.Constant("("));
+
+            // int i;
+            var iVarExpr = Expression.Variable(typeof(int));
+
+            // i = 0;
+            var iInitExpr = Expression.Assign(iVarExpr, Expression.Constant(0));
+
+            // foreach (var <item> in <collection>)
+            // {
+            var loopVarExpr = Expression.Variable(collectionType);
+
+            //      if (i > 0)
+            //      {
+            //          sb.Append(",");
+            //      }
+            var sbAppendCommaExpr = Expression.IfThen(
+                Expression.GreaterThan(iVarExpr, Expression.Constant(0)),
+                Expression.Call(
+                    sbVarExpr,
+                    sbAppendStringMethod,
+                    Expression.Constant(",")));
+
+            //      sb.Append("<prop_name>");
+            var sbAppendPropNameExpr = Expression.Call(
+                sbVarExpr,
+                sbAppendStringMethod,
+                Expression.Constant(propertyVariableName));
+
+            //      sb.Append(i);
+            var sbAppendIExpr = Expression.Call(
+                sbVarExpr,
+                sbAppendIntMethod,
+                iVarExpr);
+
+            //      IDbDataParameter dataParam;
+            var dbParamVarExpr = Expression.Variable(typeof(IDbDataParameter));
+
+            //      dataParam = command.CreateParameter();
+            var createParamExpr = Expression.Assign(
+                dbParamVarExpr,
+                Expression.Call(context.CommandExpr, context.CreateParamMethod));
+
+            //      dataParam.Direction = ParameterDirection.Input;
+            var directionExpr = Expression.Assign(
+                Expression.Property(dbParamVarExpr, context.ParamDirectionProperty),
+                Expression.Constant(ParameterDirection.Input));
+
+            //      dataParam.DbType = <some_type>;
+            var dbTypeExpr = Expression.Assign(
+                Expression.Property(dbParamVarExpr, context.ParamDbTypeProperty),
+                Expression.Constant(dbType));
+
+            //      dataParam.ParameterName = "@<prop_name>" + i;
+            var nameExpr = Expression.Assign(
+                Expression.Property(dbParamVarExpr, context.ParamNameProperty),
+                Expression.Call(
+                    stringConcatMethod,
+                    Expression.Constant(propertyVariableName),
+                    Expression.Convert(iVarExpr, typeof(object))));
+
+            //      dataParam.Value = <item>;
+            var valueExpr = Expression.Assign(
+                Expression.Property(dbParamVarExpr, context.ParamValueProperty),
+                Expression.Convert(
+                    loopVarExpr,
+                    typeof(object)));
+
+            //      command.Parameters.Add(dataParam);
+            var addParamExpr = Expression.Call(
+                Expression.Property(context.CommandExpr, context.CommandParametersProperty),
+                context.CommandParametersAddMethod,
+                dbParamVarExpr);
+
+            //      i++;
+            var iIncrementExpr = Expression.Increment(iVarExpr);
+
+            // }
+            var loopExpr = ExpressionHelper.ForEach(
+                loopVarExpr,
+                Expression.Property(context.ParametersExpr, property),
+                Expression.Block(
+                    new[] { dbParamVarExpr },
+                    sbAppendCommaExpr,
+                    sbAppendPropNameExpr,
+                    sbAppendIExpr,
+                    createParamExpr,
+                    directionExpr,
+                    dbTypeExpr,
+                    nameExpr,
+                    valueExpr,
+                    addParamExpr,
+                    iIncrementExpr
+                    ));
+
+            // sb.Append(")");
+            var sbCloseBracketExpr = Expression.Call(
+                sbVarExpr,
+                sbAppendStringMethod,
+                Expression.Constant(")"));
+
+            // string regexPattern;
+            var rxVarExpr = Expression.Variable(typeof(string));
+
+            // regexPattern = @"\(\s*(" + Regex.Escape("@<prop_name>") + @")\s*\)";
+            var rxAssignExpr = Expression.Assign(
+                rxVarExpr,
+                Expression.Call(
+                    stringConcatMethod,
+                    Expression.Constant(@"\(\s*("),
+                    Expression.Call(
+                        stringConcatMethod,
+                        Expression.Call(
+                            rxEscapeMethod,
+                            Expression.Constant(propertyVariableName)),
+                        Expression.Constant(@")\s*\)"))));
+
+            // command.CommandText = Regex.Replace(command.CommandText, regexPattern, sb.ToString());
+            var cmdTextAssignExpr = Expression.Assign(
+                Expression.Property(context.CommandExpr, context.CommandCommandTextProperty),
+                Expression.Call(
+                    rxReplaceMethod,
+                    Expression.Property(context.CommandExpr, context.CommandCommandTextProperty),
+                    rxVarExpr,
+                    Expression.Call(
+                        sbVarExpr,
+                        sbToStringMethod)));
+
+            var blockExpr = Expression.Block(
+                new[] { sbVarExpr, iVarExpr, loopVarExpr, rxVarExpr },
+                sbNewExpr,
+                sbOpenBracketExpr,
+                iInitExpr,
+                loopExpr,
+                sbCloseBracketExpr,
+                rxAssignExpr,
+                cmdTextAssignExpr);
+
+            return blockExpr;
+        }
     }
 }
