@@ -1,6 +1,7 @@
 ﻿namespace Blazer
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -11,28 +12,25 @@
 
     public static class ParameterFactoryFactory
     {
-        private const BindingFlags BindingFlags_InstanceProp = BindingFlags.Instance | BindingFlags.Public;
+        private const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
 
         public delegate void ParameterFactory(IDbCommand command, object parameters);
 
         public static ParameterFactory GetFactory(object parameters)
         {
-            //IDbCommand command = null;
-            //var par = command.CreateParameter();
-            //par.DbType = DbType.Int32;
-            //par.Direction = ParameterDirection.Input;
-            //par.ParameterName = "@Id";
-            //par.Value = 42;
-
             var commandType = typeof(IDbCommand);
-            var commandCreateParamMethod = commandType.GetMethod("CreateParameter", BindingFlags_InstanceProp);
+            var commandCreateParamMethod = commandType.GetMethod("CreateParameter", FLAGS_PUBINST);
             var commandParamExpr = Expression.Parameter(commandType, "command");
 
+            var commandParamsType = typeof(IList);
+            var commandParamsProperty = commandType.GetProperty("Parameters", FLAGS_PUBINST);
+            var commandParamsAddMethod = commandParamsType.GetMethod("Add", FLAGS_PUBINST | BindingFlags.FlattenHierarchy);
+
             var paramType = typeof(IDataParameter);
-            var paramDbTypeProperty = paramType.GetProperty("DbType", BindingFlags_InstanceProp);
-            var paramDirectionProperty = paramType.GetProperty("Direction", BindingFlags_InstanceProp);
-            var paramNameProperty = paramType.GetProperty("ParameterName", BindingFlags_InstanceProp);
-            var paramValueProperty = paramType.GetProperty("Value", BindingFlags_InstanceProp);
+            var paramDbTypeProperty = paramType.GetProperty("DbType", FLAGS_PUBINST);
+            var paramDirectionProperty = paramType.GetProperty("Direction", FLAGS_PUBINST);
+            var paramNameProperty = paramType.GetProperty("ParameterName", FLAGS_PUBINST);
+            var paramValueProperty = paramType.GetProperty("Value", FLAGS_PUBINST);
 
             var factoryBodyExpressions = new List<Expression>();
 
@@ -47,6 +45,8 @@
             var context = new ParameterExpressionFactory.Context()
             {
                 CommandExpr = commandParamExpr,
+                CommandParametersProperty = commandParamsProperty,
+                CommandParametersAddMethod = commandParamsAddMethod,
                 ParametersExpr = typedParamsVarExpr,
                 CreateParamMethod = commandCreateParamMethod,
                 ParamDbTypeProperty = paramDbTypeProperty,
@@ -55,7 +55,7 @@
                 ParamValueProperty = paramValueProperty
             };
 
-            foreach (var property in parametersType.GetProperties(BindingFlags_InstanceProp))
+            foreach (var property in parametersType.GetProperties(FLAGS_PUBINST))
             {
                 factoryBodyExpressions.Add(ParameterExpressionFactory.GetExpression(context, property));
             }

@@ -25,10 +25,36 @@
 
             public ParameterExpression CommandExpr { get; set; }
 
+            public PropertyInfo CommandParametersProperty { get; set; }
+
+            public MethodInfo CommandParametersAddMethod { get; set; }
+
             public ParameterExpression ParametersExpr { get; set; }
         }
 
         public static Expression GetExpression(Context context, PropertyInfo property)
+        {
+            DbType dbType;
+            if (DbTypeMap.TryGetDbType(property.PropertyType, out dbType))
+            {
+                return GetExpressionForKnownDbType(context, property, dbType);
+            }
+
+            if (typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType))
+            {
+                var innerType = property.PropertyType.GenericTypeArguments[0];
+                if (DbTypeMap.TryGetDbType(innerType, out dbType))
+                {
+
+                }
+
+                throw new NotSupportedException($"Collection parameter of type {innerType} is not supported. Only collections of known data types are supported.");
+            }
+
+            throw new NotSupportedException($"Parameter of type {property.PropertyType} is not supported.");
+        }
+
+        static Expression GetExpressionForKnownDbType(Context context, PropertyInfo property, DbType dbType)
         {
             // IDbDataParameter dataParam;
             var dbParamVarExpr = Expression.Variable(typeof(IDbDataParameter));
@@ -46,7 +72,7 @@
             // dataParam.DbType = <some_type>;
             var dbTypeExpr = Expression.Assign(
                 Expression.Property(dbParamVarExpr, context.ParamDbTypeProperty),
-                Expression.Constant(DbType.Int32)); // TODO: Type -> DbType mapping
+                Expression.Constant(dbType));
 
             // dataParam.ParameterName = "@<prop_name>";
             var nameExpr = Expression.Assign(
@@ -60,6 +86,12 @@
                     Expression.Property(context.ParametersExpr, property),
                     typeof(object)));
 
+            // command.Parameters.Add(dataParam);
+            var addParamExpr = Expression.Call(
+                Expression.Property(context.CommandExpr, context.CommandParametersProperty),
+                context.CommandParametersAddMethod,
+                dbParamVarExpr);
+
             // { ... }
             var blockExpr = Expression.Block(
                 new[] { dbParamVarExpr },
@@ -67,10 +99,13 @@
                 directionExpr,
                 dbTypeExpr,
                 nameExpr,
-                valueExpr
+                valueExpr,
+                addParamExpr
                 );
 
             return blockExpr;
         }
+
+
     }
 }
