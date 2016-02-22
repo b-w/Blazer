@@ -1,22 +1,24 @@
 ﻿namespace Blazer
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
 
-    public static class ParameterFactoryFactory
+    internal static class ParameterFactory
     {
-        private const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
+        const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
 
-        public delegate void ParameterFactory(IDbCommand command, object parameters);
+        delegate void ParameterFactoryFunc(IDbCommand command, object parameters);
 
-        public static ParameterFactory GetFactory(object parameters)
+        public static void AddParameters(IDbCommand command, object parameters)
+        {
+            var factory = GetFactory(parameters);
+            factory(command, parameters);
+        }
+
+        static ParameterFactoryFunc GetFactory(object parameters)
         {
             var commandType = typeof(IDbCommand);
             var commandCreateParamMethod = commandType.GetMethod("CreateParameter", FLAGS_PUBINST);
@@ -64,7 +66,7 @@
             var lambdaBlockExpr = Expression.Block(
                 new[] { typedParamsVarExpr },
                 factoryBodyExpressions);
-            var lambdaExpr = Expression.Lambda<ParameterFactory>(lambdaBlockExpr, commandParamExpr, untypedParamsExpr);
+            var lambdaExpr = Expression.Lambda<ParameterFactoryFunc>(lambdaBlockExpr, commandParamExpr, untypedParamsExpr);
             var lambda = lambdaExpr.Compile();
 
             return lambda;

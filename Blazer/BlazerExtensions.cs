@@ -9,14 +9,36 @@
 
     public static class BlazerExtensions
     {
-        public static T First<T>(IDbConnection connection, string command, object parameters = null)
+        public static T First<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        {
+            return ExecuteReader<T>(connection, command, parameters).First();
+        }
+
+        public static T FirstOrDefault<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        {
+            return ExecuteReader<T>(connection, command, parameters).FirstOrDefault();
+        }
+
+        static IEnumerable<T> ExecuteReader<T>(IDbConnection connection, string command, object parameters = null) where T : new()
         {
             using (var cmd = connection.CreateCommand())
             {
-                
-            }
+                cmd.CommandText = command;
 
-            throw new NotImplementedException();
+                if (parameters != null)
+                {
+                    ParameterFactory.AddParameters(cmd, parameters);
+                }
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var mapper = DataMapperFactory.GetMapper<T>(reader);
+                    while (reader.Read())
+                    {
+                        yield return (T)mapper(reader);
+                    }
+                }
+            }
         }
     }
 }

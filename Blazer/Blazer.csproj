@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -38,10 +39,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlazerExtensions.cs" />
+    <Compile Include="DataMapperFactory.cs" />
+    <Compile Include="DataRecordMap.cs" />
     <Compile Include="DbTypeMap.cs" />
     <Compile Include="ExpressionHelper.cs" />
     <Compile Include="ParameterExpressionFactory.cs" />
-    <Compile Include="ParameterFactoryFactory.cs" />
+    <Compile Include="ParameterFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -42,7 +42,6 @@
             {
                 type = Enum.GetUnderlyingType(type);
             }
-
             return m_typeMap.TryGetValue(type, out dbType);
         }
 
