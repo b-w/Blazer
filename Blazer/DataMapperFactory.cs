@@ -63,7 +63,7 @@
                     entityFieldExpr,
                     readExpr);
 
-                if (Nullable.GetUnderlyingType(entityFieldType) != null)
+                if (Nullable.GetUnderlyingType(entityFieldType) != null || !entityFieldType.IsValueType)
                 {
                     // if (!record.IsDbNull(i))
                     // {

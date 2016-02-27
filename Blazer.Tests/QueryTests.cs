@@ -1,7 +1,6 @@
 ﻿namespace Blazer.Tests
 {
     using System;
-    using System.Data.SqlClient;
     using Blazer;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,7 +14,7 @@
             AWProduct product;
 
             // act
-            using (var conn = new SqlConnection(@"Server=.\LOCALSQL;Database=AdventureWorks;Integrated Security=True"))
+            using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
                 product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
