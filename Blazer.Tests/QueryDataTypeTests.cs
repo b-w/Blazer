@@ -244,5 +244,34 @@
             Assert.IsNull(product1.SellEndDate);
             Assert.AreEqual(new DateTime(2012, 5, 29), product2.SellEndDate);
         }
+
+        [TestMethod]
+        public void Query_Select_Binary_Nullable()
+        {
+            // arrange
+            AWDocument doc1, doc2;
+
+            // act
+            using (var conn = TestResources.GetAdventureWorksConnection())
+            {
+                conn.Open();
+                doc1 = conn.First<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Overview" });
+                doc2 = conn.First<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Introduction 1" });
+                conn.Close();
+            }
+
+            // assert
+            Assert.IsNull(doc1.Document);
+            Assert.IsNotNull(doc2.Document);
+            Assert.AreEqual(29696, doc2.Document.Length);
+            Assert.AreEqual(208, doc2.Document[0]);
+            Assert.AreEqual(207, doc2.Document[1]);
+            Assert.AreEqual(17, doc2.Document[2]);
+            Assert.AreEqual(224, doc2.Document[3]);
+            Assert.AreEqual(161, doc2.Document[4]);
+            Assert.AreEqual(177, doc2.Document[5]);
+            Assert.AreEqual(26, doc2.Document[6]);
+            Assert.AreEqual(225, doc2.Document[7]);
+        }
     }
 }

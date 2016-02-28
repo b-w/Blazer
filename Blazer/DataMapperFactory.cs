@@ -9,6 +9,15 @@
 
     internal static class DataMapperFactory
     {
+        class Context
+        {
+            public Type EntityFieldType { get; set; }
+            public Expression EntityFieldExpr { get; set; }
+            public ParameterExpression DataRecordParameterExpr { get; set; }
+            public MethodInfo DataRecordIsDbNullMethod { get; set; }
+            public int FieldIndex { get; set; }
+        }
+
         const BindingFlags FLAGS_ALLINST = BindingFlags.Instance | BindingFlags.Public;
 
         public delegate object DataMapper(IDataRecord record);
@@ -56,29 +65,16 @@
                     entityFieldExpr = Expression.Field(entityVarExpr, fieldInfo);
                 }
 
-                var readExpr = GetReaderExpression(entityFieldType, dataRecordParamExpr, i);
-
-                // entity.<some_field> = <reader_expr>;
-                Expression entitySetFieldExpr = Expression.Assign(
-                    entityFieldExpr,
-                    readExpr);
-
-                if (Nullable.GetUnderlyingType(entityFieldType) != null || !entityFieldType.IsValueType)
+                var ctx = new Context()
                 {
-                    // if (!record.IsDbNull(i))
-                    // {
-                    //      entity.<some_field> = <reader_expr>;
-                    // }
-                    entitySetFieldExpr = Expression.IfThen(
-                        Expression.Not(
-                            Expression.Call(
-                                dataRecordParamExpr,
-                                dataRecordIsDbNullMethod,
-                                Expression.Constant(i))),
-                        entitySetFieldExpr);
-                }
+                    EntityFieldType = entityFieldType,
+                    EntityFieldExpr = entityFieldExpr,
+                    DataRecordParameterExpr = dataRecordParamExpr,
+                    DataRecordIsDbNullMethod = dataRecordIsDbNullMethod,
+                    FieldIndex = i
+                };
 
-                mapperBodyExpressions.Add(entitySetFieldExpr);
+                mapperBodyExpressions.Add(GetFieldMapperExpression(ctx));
             }
 
             // return entity;
@@ -122,19 +118,59 @@
             return null;
         }
 
-        static Expression GetReaderExpression(Type fieldType, ParameterExpression dataRecordParameterExpr, int fieldIndex)
+        static Expression GetFieldMapperExpression(Context context)
+        {
+            IDataTypeMapper mapper;
+            if (DataTypeMapperStore.TryGetMapper(context.EntityFieldType, out mapper))
+            {
+                return mapper.GetReaderExpression(
+                    context.EntityFieldExpr,
+                    context.DataRecordParameterExpr,
+                    context.DataRecordIsDbNullMethod,
+                    context.FieldIndex);
+            }
+            return GetValueTypeFieldMapperExpression(context);
+        }
+
+        static Expression GetValueTypeFieldMapperExpression(Context context)
+        {
+            var readExpr = GetValueTypeReaderExpression(context);
+
+            // entity.<some_field> = <reader_expr>;
+            Expression entitySetFieldExpr = Expression.Assign(
+                context.EntityFieldExpr,
+                readExpr);
+
+            if (Nullable.GetUnderlyingType(context.EntityFieldType) != null || !context.EntityFieldType.IsValueType)
+            {
+                // if (!record.IsDbNull(i))
+                // {
+                //      entity.<some_field> = <reader_expr>;
+                // }
+                entitySetFieldExpr = Expression.IfThen(
+                    Expression.Not(
+                        Expression.Call(
+                            context.DataRecordParameterExpr,
+                            context.DataRecordIsDbNullMethod,
+                            Expression.Constant(context.FieldIndex))),
+                    entitySetFieldExpr);
+            }
+            return entitySetFieldExpr;
+        }
+
+        static Expression GetValueTypeReaderExpression(Context context)
         {
             MethodInfo method;
-            if (DataRecordMap.TryGetGetMethod(fieldType, out method))
+            if (DataRecordMap.TryGetGetMethod(context.EntityFieldType, out method))
             {
-                Expression callReaderExpr = Expression.Call(dataRecordParameterExpr, method, Expression.Constant(fieldIndex));
-                if (fieldType.IsEnum || Nullable.GetUnderlyingType(fieldType) != null)
+                Expression callReaderExpr = Expression.Call(context.DataRecordParameterExpr, method, Expression.Constant(context.FieldIndex));
+                if (context.EntityFieldType.IsEnum || Nullable.GetUnderlyingType(context.EntityFieldType) != null)
                 {
-                    callReaderExpr = Expression.Convert(callReaderExpr, fieldType);
+                    callReaderExpr = Expression.Convert(callReaderExpr, context.EntityFieldType);
                 }
                 return callReaderExpr;
             }
-            throw new NotSupportedException($"Field of type {fieldType} is not supported.");
+            throw new NotSupportedException($"Field of type {context.EntityFieldType} is not supported.");
         }
     }
 }

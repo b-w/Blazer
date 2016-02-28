@@ -4,7 +4,7 @@
     using System.Collections.Concurrent;
     using System.Data;
 
-    internal static class DbTypeMap
+    internal static class DbTypeStore
     {
         static readonly ConcurrentDictionary<Type, DbType> m_typeMap = new ConcurrentDictionary<Type, DbType>()
         {

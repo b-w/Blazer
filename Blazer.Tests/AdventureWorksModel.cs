@@ -34,6 +34,8 @@
         public bool FolderFlag { get; set; }
 
         public byte Status { get; set; }
+
+        public byte[] Document { get; set; }
     }
 
     public class AWSalesPerson

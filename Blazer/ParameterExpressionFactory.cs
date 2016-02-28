@@ -37,7 +37,7 @@
         public static Expression GetExpression(Context context, PropertyInfo property)
         {
             DbType dbType;
-            if (DbTypeMap.TryGetDbType(property.PropertyType, out dbType))
+            if (DbTypeStore.TryGetDbType(property.PropertyType, out dbType))
             {
                 return GetExpressionForKnownDbType(context, property, dbType);
             }
@@ -46,7 +46,7 @@
             if (collectionInterfaceType != null)
             {
                 var innerType = collectionInterfaceType.GenericTypeArguments[0];
-                if (DbTypeMap.TryGetDbType(innerType, out dbType))
+                if (DbTypeStore.TryGetDbType(innerType, out dbType))
                 {
                     return GetExpressionForCollectionType(context, property, innerType, dbType);
                 }
