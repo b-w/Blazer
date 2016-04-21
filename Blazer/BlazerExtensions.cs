@@ -9,17 +9,42 @@
 
     public static class BlazerExtensions
     {
-        public static T First<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        public static T Scalar<T>(this IDbConnection connection, string command, object parameters = null)
         {
-            return ExecuteReader<T>(connection, command, parameters).First();
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = command;
+
+                if (parameters != null)
+                {
+                    ParameterFactory.AddParameters(cmd, parameters);
+                }
+
+                var value = cmd.ExecuteScalar();
+                if (value == null || value == DBNull.Value)
+                {
+                    return default(T);
+                }
+                return (T)value;
+            }
         }
 
-        public static T FirstOrDefault<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        public static int Command(this IDbConnection connection, string command, object parameters = null)
         {
-            return ExecuteReader<T>(connection, command, parameters).FirstOrDefault();
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = command;
+
+                if (parameters != null)
+                {
+                    ParameterFactory.AddParameters(cmd, parameters);
+                }
+
+                return cmd.ExecuteNonQuery();
+            }
         }
 
-        static IEnumerable<T> ExecuteReader<T>(IDbConnection connection, string command, object parameters = null) where T : new()
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
         {
             using (var cmd = connection.CreateCommand())
             {
@@ -36,6 +61,28 @@
                     while (reader.Read())
                     {
                         yield return (T)mapper(reader);
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<dynamic> Query(this IDbConnection connection, string command, object parameters = null)
+        {
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = command;
+
+                if (parameters != null)
+                {
+                    ParameterFactory.AddParameters(cmd, parameters);
+                }
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var mapper = DataMapperFactory.GetMapper();
+                    while (reader.Read())
+                    {
+                        yield return mapper(reader);
                     }
                 }
             }

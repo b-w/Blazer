@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data;
+    using System.Dynamic;
     using System.Linq.Expressions;
     using System.Reflection;
 
@@ -21,6 +22,22 @@
         const BindingFlags FLAGS_ALLINST = BindingFlags.Instance | BindingFlags.Public;
 
         public delegate object DataMapper(IDataRecord record);
+
+        public static DataMapper GetMapper()
+        {
+            return (record) =>
+            {
+                dynamic expando = new ExpandoObject();
+                var expandoDict = (IDictionary<string, object>)expando;
+
+                for (int i = 0; i < record.FieldCount; i++)
+                {
+                    var value = record.GetValue(i);
+                    expandoDict.Add(record.GetName(i), value == DBNull.Value ? null : value);
+                }
+                return expando;
+            };
+        }
 
         public static DataMapper GetMapper<T>(IDataReader reader) where T : new()
         {
