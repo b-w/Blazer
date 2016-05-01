@@ -60,12 +60,16 @@
     <Compile Include="QueryTests.cs" />
     <Compile Include="TestResources.cs" />
     <Compile Include="QueryDataTypeTests.cs" />
+    <Compile Include="StoredProcedureTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Blazer\Blazer.csproj">
       <Project>{64756601-d702-4eb8-84f4-3037d57ee81b}</Project>
       <Name>Blazer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CreateTestSp.sql" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
