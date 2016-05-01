@@ -5,24 +5,24 @@
 
     public static class BlazerLinqExtensions
     {
-        public static T First<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        public static T First<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
-            return connection.Query<T>(command, parameters).First();
+            return connection.Query<T>(command, parameters, config).First();
         }
 
-        public static T FirstOrDefault<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        public static T FirstOrDefault<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
-            return connection.Query<T>(command, parameters).FirstOrDefault();
+            return connection.Query<T>(command, parameters, config).FirstOrDefault();
         }
 
-        public static T Single<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        public static T Single<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
-            return connection.Query<T>(command, parameters).Single();
+            return connection.Query<T>(command, parameters, config).Single();
         }
 
-        public static T SingleOrDefault<T>(this IDbConnection connection, string command, object parameters = null) where T : new()
+        public static T SingleOrDefault<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
-            return connection.Query<T>(command, parameters).SingleOrDefault();
+            return connection.Query<T>(command, parameters, config).SingleOrDefault();
         }
     }
 }

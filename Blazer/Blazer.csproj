@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="BlazerExtensions.cs" />
     <Compile Include="BlazerLinqExtensions.cs" />
+    <Compile Include="CommandConfiguration.cs" />
+    <Compile Include="CommandFactory.cs" />
     <Compile Include="DataMapperFactory.cs" />
     <Compile Include="DataRecordMap.cs" />
     <Compile Include="DataTypeMapperStore.cs" />
