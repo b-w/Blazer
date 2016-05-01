@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="21f57aad057a4bafaa9e7f410baccbc4" Name="Diagram1">
+        <EntityTypeShape EntityType="EFModel.AWBuildVersion" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.DatabaseLog" Width="1.5" PointX="2.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ErrorLog" Width="1.5" PointX="4.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Department" Width="1.5" PointX="12.75" PointY="42.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Employee" Width="1.5" PointX="9.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.EmployeeDepartmentHistory" Width="1.5" PointX="15" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.EmployeePayHistory" Width="1.5" PointX="12" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.JobCandidate" Width="1.5" PointX="12" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Shift" Width="1.5" PointX="12.75" PointY="45.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Address" Width="1.5" PointX="12" PointY="61.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.AddressType" Width="1.5" PointX="14" PointY="52.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.BusinessEntity" Width="1.5" PointX="5.25" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.BusinessEntityAddress" Width="1.5" PointX="16.25" PointY="34" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.BusinessEntityContact" Width="1.5" PointX="14.75" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ContactType" Width="1.5" PointX="12.5" PointY="49.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.CountryRegion" Width="1.5" PointX="7.5" PointY="59.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.EmailAddress" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Password" Width="1.5" PointX="9.75" PointY="44.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Person" Width="1.5" PointX="7.5" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.PersonPhone" Width="1.5" PointX="12.75" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.PhoneNumberType" Width="1.5" PointX="10.5" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.StateProvince" Width="1.5" PointX="9.75" PointY="61.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.BillOfMaterials" Width="1.5" PointX="3" PointY="25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Culture" Width="1.5" PointX="3.75" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Illustration" Width="1.5" PointX="3.75" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Location" Width="1.5" PointX="9" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Product" Width="1.5" PointX="6" PointY="22.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductCategory" Width="1.5" PointX="1.5" PointY="29.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductCostHistory" Width="1.5" PointX="8.25" PointY="17.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductDescription" Width="1.5" PointX="3.75" PointY="17.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductInventory" Width="1.5" PointX="11.25" PointY="25.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductListPriceHistory" Width="1.5" PointX="8.25" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductModel" Width="1.5" PointX="3.75" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductModelIllustration" Width="1.5" PointX="6" PointY="19.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductModelProductDescriptionCulture" Width="1.5" PointX="6" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductPhoto" Width="1.5" PointX="9" PointY="37.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductProductPhoto" Width="1.5" PointX="11.25" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductReview" Width="1.5" PointX="8.25" PointY="30.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductSubcategory" Width="1.5" PointX="3.75" PointY="29.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ScrapReason" Width="1.5" PointX="9" PointY="20.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.TransactionHistory" Width="1.5" PointX="8.25" PointY="33.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.TransactionHistoryArchive" Width="1.5" PointX="0.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.UnitMeasure" Width="1.5" PointX="0.75" PointY="25.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.WorkOrder" Width="1.5" PointX="11.25" PointY="29" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.WorkOrderRouting" Width="1.5" PointX="13.5" PointY="32.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductVendor" Width="1.5" PointX="14.25" PointY="24.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.PurchaseOrderDetail" Width="1.5" PointX="14.25" PointY="20" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.PurchaseOrderHeader" Width="1.5" PointX="12" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ShipMethod" Width="1.5" PointX="9.75" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Vendor" Width="1.5" PointX="9.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.CountryRegionCurrency" Width="1.5" PointX="17" PointY="64.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.CreditCard" Width="1.5" PointX="12" PointY="67.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Currency" Width="1.5" PointX="9.75" PointY="70.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.CurrencyRate" Width="1.5" PointX="12" PointY="70.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Customer" Width="1.5" PointX="12" PointY="74.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.PersonCreditCard" Width="1.5" PointX="14.25" PointY="38.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesOrderDetail" Width="1.5" PointX="16.5" PointY="29" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesOrderHeader" Width="1.5" PointX="14.25" PointY="64.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesOrderHeaderSalesReason" Width="1.5" PointX="16.5" PointY="67.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesPerson" Width="1.5" PointX="7.5" PointY="74.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesPersonQuotaHistory" Width="1.5" PointX="9.75" PointY="79" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesReason" Width="1.5" PointX="14.25" PointY="61.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesTaxRate" Width="1.5" PointX="12" PointY="57.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesTerritory" Width="1.5" PointX="7.5" PointY="62.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SalesTerritoryHistory" Width="1.5" PointX="9.75" PointY="66.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ShoppingCartItem" Width="1.5" PointX="8.25" PointY="50.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SpecialOffer" Width="1.5" PointX="12" PointY="38" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.SpecialOfferProduct" Width="1.5" PointX="14.25" PointY="29.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.Store" Width="1.5" PointX="9.75" PointY="74.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EFModel.ProductDocument" Width="1.5" PointX="8.25" PointY="56.5" IsExpanded="true" />
+        <AssociationConnector Association="EFModel.FK_EmployeeDepartmentHistory_Department_DepartmentID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Employee_Person_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_EmployeeDepartmentHistory_Employee_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_EmployeePayHistory_Employee_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_JobCandidate_Employee_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PurchaseOrderHeader_Employee_EmployeeID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesPerson_Employee_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_EmployeeDepartmentHistory_Shift_ShiftID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Address_StateProvince_StateProvinceID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BusinessEntityAddress_Address_AddressID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_Address_BillToAddressID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_Address_ShipToAddressID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BusinessEntityAddress_AddressType_AddressTypeID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BusinessEntityAddress_BusinessEntity_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BusinessEntityContact_BusinessEntity_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Person_BusinessEntity_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Store_BusinessEntity_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Vendor_BusinessEntity_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BusinessEntityContact_ContactType_ContactTypeID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BusinessEntityContact_Person_PersonID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_CountryRegionCurrency_CountryRegion_CountryRegionCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesTerritory_CountryRegion_CountryRegionCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_StateProvince_CountryRegion_CountryRegionCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_EmailAddress_Person_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Password_Person_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Customer_Person_PersonID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PersonCreditCard_Person_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PersonPhone_Person_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PersonPhone_PhoneNumberType_PhoneNumberTypeID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesTaxRate_StateProvince_StateProvinceID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_StateProvince_SalesTerritory_TerritoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BillOfMaterials_Product_ComponentID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BillOfMaterials_Product_ProductAssemblyID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_BillOfMaterials_UnitMeasure_UnitMeasureCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductModelProductDescriptionCulture_Culture_CultureID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductModelIllustration_Illustration_IllustrationID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductInventory_Location_LocationID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_WorkOrderRouting_Location_LocationID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Product_ProductModel_ProductModelID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Product_ProductSubcategory_ProductSubcategoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Product_UnitMeasure_SizeUnitMeasureCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Product_UnitMeasure_WeightUnitMeasureCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductCostHistory_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductDocument_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductInventory_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductListPriceHistory_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductProductPhoto_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductReview_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductVendor_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PurchaseOrderDetail_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ShoppingCartItem_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SpecialOfferProduct_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_TransactionHistory_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_WorkOrder_Product_ProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductSubcategory_ProductCategory_ProductCategoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductModelProductDescriptionCulture_ProductDescription_ProductDescriptionID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductModelIllustration_ProductModel_ProductModelID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductModelProductDescriptionCulture_ProductModel_ProductModelID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductProductPhoto_ProductPhoto_ProductPhotoID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_WorkOrder_ScrapReason_ScrapReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductVendor_UnitMeasure_UnitMeasureCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_WorkOrderRouting_WorkOrder_WorkOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_ProductVendor_Vendor_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PurchaseOrderDetail_PurchaseOrderHeader_PurchaseOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PurchaseOrderHeader_ShipMethod_ShipMethodID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PurchaseOrderHeader_Vendor_VendorID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_ShipMethod_ShipMethodID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_CountryRegionCurrency_Currency_CurrencyCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_PersonCreditCard_CreditCard_CreditCardID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_CreditCard_CreditCardID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_CurrencyRate_Currency_FromCurrencyCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_CurrencyRate_Currency_ToCurrencyCode" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_CurrencyRate_CurrencyRateID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Customer_SalesTerritory_TerritoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Customer_Store_StoreID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_Customer_CustomerID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderDetail_SalesOrderHeader_SalesOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderDetail_SpecialOfferProduct_SpecialOfferIDProductID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_SalesPerson_SalesPersonID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeader_SalesTerritory_TerritoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeaderSalesReason_SalesOrderHeader_SalesOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesOrderHeaderSalesReason_SalesReason_SalesReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesPerson_SalesTerritory_TerritoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesPersonQuotaHistory_SalesPerson_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesTerritoryHistory_SalesPerson_BusinessEntityID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_Store_SalesPerson_SalesPersonID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SalesTerritoryHistory_SalesTerritory_TerritoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="EFModel.FK_SpecialOfferProduct_SpecialOffer_SpecialOfferID" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
