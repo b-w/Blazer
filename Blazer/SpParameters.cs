@@ -84,7 +84,12 @@
             SpParameter spParam;
             if (m_params.TryGetValue(name, out spParam))
             {
-                return (T)spParam.Value;
+                var outputValue = spParam.Value;
+                if (outputValue == DBNull.Value)
+                {
+                    return default(T);
+                }
+                return (T)outputValue;
             }
 
             throw new KeyNotFoundException($"Output parameter not found: {name}.");
@@ -94,7 +99,12 @@
         {
             if (m_return != null)
             {
-                return (T)m_return.Value;
+                var returnValue = m_return.Value;
+                if (returnValue == DBNull.Value)
+                {
+                    return default(T);
+                }
+                return (T)returnValue;
             }
 
             throw new InvalidOperationException("No return parameter was provided.");

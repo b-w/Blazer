@@ -55,6 +55,7 @@
             spParams.AddInput("@y", 2);
             spParams.AddInputOutput("@i", 8);
             spParams.AddOutput("@msg", DbType.String, size: 20);
+            spParams.AddOutput("@nullVal", DbType.String, size: 20);
             spParams.SetReturn("@return", DbType.Int32);
 
             // act
@@ -69,6 +70,7 @@
             Assert.AreEqual(42, spParams.GetReturnValue<int>());
             Assert.AreEqual(9, spParams.GetOutputValue<int>("@i"));
             Assert.AreEqual("Hello Blazer!", spParams.GetOutputValue<string>("@msg"));
+            Assert.IsNull(spParams.GetOutputValue<string>("@nullVal"));
         }
     }
 }
