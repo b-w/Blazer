@@ -1,6 +1,8 @@
 ﻿namespace Blazer
 {
+    using System;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq.Expressions;
@@ -9,6 +11,8 @@
     internal static class ParameterFactory
     {
         const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
+
+        static readonly ConcurrentDictionary<Type, ParameterFactoryFunc> m_factoryCache = new ConcurrentDictionary<Type, ParameterFactoryFunc>();
 
         delegate void ParameterFactoryFunc(IDbCommand command, object parameters);
 
@@ -20,6 +24,14 @@
 
         static ParameterFactoryFunc GetFactory(object parameters)
         {
+            var parametersType = parameters.GetType();
+
+            ParameterFactoryFunc cachedFactory;
+            if (m_factoryCache.TryGetValue(parametersType, out cachedFactory))
+            {
+                return cachedFactory;
+            }
+
             var commandType = typeof(IDbCommand);
             var commandCreateParamMethod = commandType.GetMethod("CreateParameter", FLAGS_PUBINST);
             var commandCommandTextProperty = commandType.GetProperty("CommandText", FLAGS_PUBINST);
@@ -37,7 +49,6 @@
 
             var factoryBodyExpressions = new List<Expression>();
 
-            var parametersType = parameters.GetType();
             var untypedParamsExpr = Expression.Parameter(typeof(object), "parameters");
             var typedParamsVarExpr = Expression.Variable(parametersType);
             var typedParamsAssignExpr = Expression.Assign(
@@ -68,6 +79,8 @@
                 factoryBodyExpressions);
             var lambdaExpr = Expression.Lambda<ParameterFactoryFunc>(lambdaBlockExpr, commandParamExpr, untypedParamsExpr);
             var lambda = lambdaExpr.Compile();
+
+            m_factoryCache.AddOrUpdate(parametersType, lambda, (key, old) => lambda);
 
             return lambda;
         }
