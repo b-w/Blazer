@@ -24,8 +24,14 @@
 
         public delegate object DataMapper(IDataRecord record);
 
-        public static DataMapper GetMapper()
+        public static DataMapper GetMapper(IDataReader reader)
         {
+            var columns = new string[reader.FieldCount];
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                columns[i] = reader.GetName(i);
+            }
+
             return (record) =>
             {
                 dynamic expando = new ExpandoObject();
@@ -34,7 +40,7 @@
                 for (int i = 0; i < record.FieldCount; i++)
                 {
                     var value = record.GetValue(i);
-                    expandoDict.Add(record.GetName(i), value == DBNull.Value ? null : value);
+                    expandoDict[columns[i]] = (value == DBNull.Value ? null : value);
                 }
                 return expando;
             };
