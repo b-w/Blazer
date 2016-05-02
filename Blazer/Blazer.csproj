@@ -39,6 +39,8 @@
   <ItemGroup>
     <Compile Include="BlazerExtensions.cs" />
     <Compile Include="BlazerLinqExtensions.cs" />
+    <Compile Include="Caching\DataMapperCache.cs" />
+    <Compile Include="Caching\ParameterFactoryCache.cs" />
     <Compile Include="CommandConfiguration.cs" />
     <Compile Include="CommandFactory.cs" />
     <Compile Include="DataMapperFactory.cs" />

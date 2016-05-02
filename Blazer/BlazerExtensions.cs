@@ -48,7 +48,7 @@
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var mapper = DataMapperFactory.GetMapper<T>(reader);
+                    var mapper = DataMapperFactory.GetMapper<T>(cmd, reader);
                     while (reader.Read())
                     {
                         yield return (T)mapper(reader);

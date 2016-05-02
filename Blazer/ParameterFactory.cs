@@ -1,20 +1,17 @@
 ﻿namespace Blazer
 {
-    using System;
     using System.Collections;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq.Expressions;
     using System.Reflection;
+    using Blazer.Caching;
 
     internal static class ParameterFactory
     {
         const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
 
-        static readonly ConcurrentDictionary<Type, ParameterFactoryFunc> m_factoryCache = new ConcurrentDictionary<Type, ParameterFactoryFunc>();
-
-        delegate void ParameterFactoryFunc(IDbCommand command, object parameters);
+        internal delegate void ParameterFactoryFunc(IDbCommand command, object parameters);
 
         public static void AddParameters(IDbCommand command, object parameters)
         {
@@ -27,7 +24,7 @@
             var parametersType = parameters.GetType();
 
             ParameterFactoryFunc cachedFactory;
-            if (m_factoryCache.TryGetValue(parametersType, out cachedFactory))
+            if (ParameterFactoryCache.TryGet(parametersType, out cachedFactory))
             {
                 return cachedFactory;
             }
@@ -80,7 +77,7 @@
             var lambdaExpr = Expression.Lambda<ParameterFactoryFunc>(lambdaBlockExpr, commandParamExpr, untypedParamsExpr);
             var lambda = lambdaExpr.Compile();
 
-            m_factoryCache.AddOrUpdate(parametersType, lambda, (key, old) => lambda);
+            ParameterFactoryCache.Add(parametersType, lambda);
 
             return lambda;
         }

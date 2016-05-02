@@ -7,6 +7,7 @@
     using System.Dynamic;
     using System.Linq.Expressions;
     using System.Reflection;
+    using Blazer.Caching;
 
     internal static class DataMapperFactory
     {
@@ -39,9 +40,17 @@
             };
         }
 
-        public static DataMapper GetMapper<T>(IDataReader reader) where T : new()
+        public static DataMapper GetMapper<T>(IDbCommand command, IDataReader reader) where T : new()
         {
             var entityType = typeof(T);
+
+            var cacheKey = new DataMapperCache.Key(command, entityType);
+            DataMapper cachedMapper;
+            if (DataMapperCache.TryGet(cacheKey, out cachedMapper))
+            {
+                return cachedMapper;
+            }
+
             var dataRecordType = typeof(IDataRecord);
             var dataRecordParamExpr = Expression.Parameter(dataRecordType, "record");
             var dataRecordIsDbNullMethod = dataRecordType.GetMethod("IsDBNull", new[] { typeof(int) });
@@ -106,7 +115,11 @@
                 new[] { entityVarExpr },
                 mapperBodyExpressions);
             var lambdaExpr = Expression.Lambda<DataMapper>(lambdaBodyExpr, dataRecordParamExpr);
-            return lambdaExpr.Compile();
+            var lambda = lambdaExpr.Compile();
+
+            DataMapperCache.Add(cacheKey, lambda);
+
+            return lambda;
         }
 
         static MemberInfo GetEntityField(Type entityType, string columnName)
