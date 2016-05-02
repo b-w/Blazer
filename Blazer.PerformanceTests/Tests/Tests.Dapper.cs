@@ -3,14 +3,14 @@
     using System;
     using System.Data;
     using System.Linq;
-    using Blazer;
-    using Models.Blazer;
+    using Models.AdventureWorks;
+    using Dapper;
 
-    public class BlazerSmallSelectTest : TestBase
+    public class DapperSmallSelectTest : TestBase
     {
-        private IDbConnection m_conn;
+        IDbConnection m_conn;
 
-        public BlazerSmallSelectTest() : base("Blazer: SELECT 500 records")
+        public DapperSmallSelectTest() : base("Dapper v1.42.0: SELECT 500 records")
         {
         }
 
@@ -50,11 +50,11 @@
         }
     }
 
-    public class BlazerLargeSelectTest : TestBase
+    public class DapperLargeSelectTest : TestBase
     {
-        private IDbConnection m_conn;
+        IDbConnection m_conn;
 
-        public BlazerLargeSelectTest() : base("Blazer: SELECT 5.000 records")
+        public DapperLargeSelectTest() : base("Dapper v1.42.0: SELECT 5.000 records")
         {
         }
 
@@ -94,11 +94,11 @@
         }
     }
 
-    public class BlazerHugeSelectTest : TestBase
+    public class DapperHugeSelectTest : TestBase
     {
-        private IDbConnection m_conn;
+        IDbConnection m_conn;
 
-        public BlazerHugeSelectTest() : base("Blazer: SELECT 50.000 records")
+        public DapperHugeSelectTest() : base("Dapper v1.42.0: SELECT 50.000 records")
         {
         }
 
@@ -138,12 +138,14 @@
         }
     }
 
-    public class BlazerSingleSelectManyTimesTest : TestBase
+    public class DapperSingleSelectManyTimesTest : TestBase
     {
-        private IDbConnection m_conn;
+        IDbConnection m_conn;
+        readonly int m_count;
 
-        public BlazerSingleSelectManyTimesTest() : base("Blazer: SELECT 1 record, 500 times")
+        public DapperSingleSelectManyTimesTest(int count) : base($"Dapper v1.42.0: SELECT 1 record, {count:N0} times")
         {
+            m_count = count;
         }
 
         protected override void Warmup()
@@ -161,11 +163,64 @@
         protected override void DoWork()
         {
             var rng = new Random();
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < m_count; i++)
             {
-                var transaction = m_conn.FirstOrDefault<TransactionHistory>(
-                    "SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = @Id",
-                    new { Id = rng.Next(100000, 200000) });
+                var transaction = m_conn.Query<TransactionHistory>(
+                        "SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = @Id",
+                        new { Id = rng.Next(100000, 200000) })
+                    .FirstOrDefault();
+                if (transaction != null && transaction.ProductID <= 0)
+                {
+                    throw new ApplicationException();
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!m_disposed)
+            {
+                if (disposing)
+                {
+                    m_conn.Close();
+                    m_conn.Dispose();
+                }
+                m_disposed = true;
+            }
+        }
+    }
+
+    public class DapperSingleDynamicSelectManyTimesTest : TestBase
+    {
+        IDbConnection m_conn;
+        readonly int m_count;
+
+        public DapperSingleDynamicSelectManyTimesTest(int count) : base($"Dapper v1.42.0: SELECT 1 record, {count:N0} times (dynamic)")
+        {
+            m_count = count;
+        }
+
+        protected override void Warmup()
+        {
+            m_conn = TestResources.GetAdventureWorksConnection();
+            m_conn.Open();
+            var orderDetails = m_conn.Query("SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] < 100010")
+                .ToList();
+            if (orderDetails.Count == 0)
+            {
+                throw new ApplicationException();
+            }
+        }
+
+        protected override void DoWork()
+        {
+            var rng = new Random();
+            for (int i = 0; i < m_count; i++)
+            {
+                var transaction = m_conn.Query(
+                        "SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = @Id",
+                        new { Id = rng.Next(100000, 200000) })
+                    .FirstOrDefault();
                 if (transaction != null && transaction.ProductID <= 0)
                 {
                     throw new ApplicationException();

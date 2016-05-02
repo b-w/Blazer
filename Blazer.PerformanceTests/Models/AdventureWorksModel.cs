@@ -1,7 +1,9 @@
-﻿namespace Blazer.PerformanceTests.Models.Blazer
+﻿namespace Blazer.PerformanceTests.Models.AdventureWorks
 {
     using System;
 
+    [ServiceStack.DataAnnotations.Schema("Production")]
+    [ServiceStack.DataAnnotations.Alias("Product")]
     public class Product
     {
         public int ProductID { get; set; }
@@ -31,6 +33,8 @@
         public System.DateTime ModifiedDate { get; set; }
     }
 
+    [ServiceStack.DataAnnotations.Schema("Purchasing")]
+    [ServiceStack.DataAnnotations.Alias("PurchaseOrderDetail")]
     public class PurchaseOrderDetail
     {
         public int PurchaseOrderID { get; set; }
@@ -46,6 +50,8 @@
         public System.DateTime ModifiedDate { get; set; }
     }
 
+    [ServiceStack.DataAnnotations.Schema("Production")]
+    [ServiceStack.DataAnnotations.Alias("TransactionHistory")]
     public class TransactionHistory
     {
         public int TransactionID { get; set; }

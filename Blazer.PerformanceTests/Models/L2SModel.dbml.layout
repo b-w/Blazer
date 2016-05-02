@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="L2SModel">
+  <DataContextMoniker Name="/L2SModelDataContext" />
+  <nestedChildShapes>
+    <classShape Id="8ea4e5bb-e919-4e63-a7a5-19f8ecdf0632" absoluteBounds="0.5, 0.5, 2, 5.6169254557291657">
+      <DataClassMoniker Name="/L2SModelDataContext/Product" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0cdfbf9e-b087-402a-ae51-d0ca095704cd" absoluteBounds="0.51500000000000012, 0.96, 1.9700000000000002, 5.0569254557291661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="25b1f3d8-423e-46ef-ba62-c1ed2fd7f71b" absoluteBounds="3.875, 3.25, 2, 2.9247054036458331">
+      <DataClassMoniker Name="/L2SModelDataContext/PurchaseOrderDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ece71d23-a7a2-4633-8a40-4ef050db850c" absoluteBounds="3.89, 3.71, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 4.68346272786458); (3.875 : 4.68346272786458)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/L2SModelDataContext/Product/Product_PurchaseOrderDetail" />
+      <nodes>
+        <classShapeMoniker Id="8ea4e5bb-e919-4e63-a7a5-19f8ecdf0632" />
+        <classShapeMoniker Id="25b1f3d8-423e-46ef-ba62-c1ed2fd7f71b" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="2e2d035b-8695-430f-941b-65a02668a292" absoluteBounds="3.875, 0.5, 2, 2.5401025390625">
+      <DataClassMoniker Name="/L2SModelDataContext/TransactionHistory" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e9585686-37f3-4441-91c5-a77f45284e97" absoluteBounds="3.8899999999999997, 0.96, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 1.77005126953125); (3.875 : 1.77005126953125)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/L2SModelDataContext/Product/Product_TransactionHistory" />
+      <nodes>
+        <classShapeMoniker Id="8ea4e5bb-e919-4e63-a7a5-19f8ecdf0632" />
+        <classShapeMoniker Id="2e2d035b-8695-430f-941b-65a02668a292" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Blazer.PerformanceTests.Models
+namespace Blazer.PerformanceTests.Models.Entity
 {
     using System;
     using System.Data.Entity;
