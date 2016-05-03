@@ -321,6 +321,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="Tests\MultiTestResult.cs" />
+    <Compile Include="Tests\MultiTestRunner.cs" />
     <Compile Include="Tests\Tests.Blazer.cs" />
     <Compile Include="Tests\Tests.Dapper.cs" />
     <Compile Include="Tests\Tests.EFCC.cs" />

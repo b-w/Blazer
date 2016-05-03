@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -14,23 +15,23 @@
             Console.WriteLine("Starting performance tests...");
             Console.WriteLine();
 
-            TestHandCrafted();
+            Console.WriteLine("Warming up DB...");
+            TestHandCrafted(Console.Out);
+            Console.WriteLine("DB warmup completed!");
             Console.WriteLine();
-            TestBlazer();
-            Console.WriteLine();
-            TestL2S();
-            Console.WriteLine();
-            TestL2SCC();
-            Console.WriteLine();
-            TestEF();
-            Console.WriteLine();
-            TestEFCC();
-            Console.WriteLine();
-            TestDapper();
-            Console.WriteLine();
-            TestOrmLite();
-            Console.WriteLine();
-            TestPetaPoco();
+
+            using (var sw = new StreamWriter("results.csv"))
+            {
+                TestHandCrafted(sw);
+                TestBlazer(sw);
+                TestL2S(sw);
+                TestL2SCC(sw);
+                TestEF(sw);
+                TestEFCC(sw);
+                TestDapper(sw);
+                TestOrmLite(sw);
+                TestPetaPoco(sw);
+            }
 
             Console.WriteLine();
             Console.WriteLine("Performance tests completed!");
@@ -38,299 +39,121 @@
             //Console.ReadKey();
         }
 
-        static void RunTest(TestBase test)
+        static void RunTest(Func<TestBase> testFactory, TextWriter resultStream)
         {
-            Console.Write(test.Name.PadRight(60, ' '));
-            var results = test.Run();
-            Console.WriteLine($"{results.Duration}ms".PadLeft(10, ' '));
+            Console.Write("Starting test set...");
+            var multiTester = new MultiTestRunner(testFactory, 10);
+            var results = multiTester.Run();
+            resultStream.WriteLine("{0}\t{1}\t{2:0.00}\t{3:0.00}", results.Name, results.SampleCount, results.DurationAvg, results.DurationStdDv);
+            Console.WriteLine("DONE!");
         }
 
-        static void TestHandCrafted()
+        static void TestHandCrafted(TextWriter resultStream)
         {
-            using (var test = new HCSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new HCLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new HCHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new HCSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new HCSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new HCSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Hand-Crafted ADO.NET");
+            RunTest(() => new HCSmallSelectTest(), resultStream);
+            RunTest(() => new HCLargeSelectTest(), resultStream);
+            RunTest(() => new HCHugeSelectTest(), resultStream);
+            RunTest(() => new HCSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new HCSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new HCSingleSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestBlazer()
+        static void TestBlazer(TextWriter resultStream)
         {
-            using (var test = new BlazerSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerSingleDynamicSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerSingleDynamicSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new BlazerSingleDynamicSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Blazer");
+            RunTest(() => new BlazerSmallSelectTest(), resultStream);
+            RunTest(() => new BlazerLargeSelectTest(), resultStream);
+            RunTest(() => new BlazerHugeSelectTest(), resultStream);
+            RunTest(() => new BlazerSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new BlazerSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new BlazerSingleSelectManyTimesTest(50000), resultStream);
+            RunTest(() => new BlazerSingleDynamicSelectManyTimesTest(500), resultStream);
+            RunTest(() => new BlazerSingleDynamicSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new BlazerSingleDynamicSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestL2S()
+        static void TestL2S(TextWriter resultStream)
         {
-            using (var test = new L2SSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Linq2SQL");
+            RunTest(() => new L2SSmallSelectTest(), resultStream);
+            RunTest(() => new L2SLargeSelectTest(), resultStream);
+            RunTest(() => new L2SHugeSelectTest(), resultStream);
+            RunTest(() => new L2SSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new L2SSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new L2SSingleSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestL2SCC()
+        static void TestL2SCC(TextWriter resultStream)
         {
-            using (var test = new L2SCCSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SCCLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SCCHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SCCSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SCCSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new L2SCCSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Linq2SQL (change tracking enabled)");
+            RunTest(() => new L2SCCSmallSelectTest(), resultStream);
+            RunTest(() => new L2SCCLargeSelectTest(), resultStream);
+            RunTest(() => new L2SCCHugeSelectTest(), resultStream);
+            RunTest(() => new L2SCCSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new L2SCCSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new L2SCCSingleSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestEF()
+        static void TestEF(TextWriter resultStream)
         {
-            using (var test = new EFSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new EFLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new EFHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new EFSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new EFSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new EFSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Entity Framework 6");
+            RunTest(() => new EFSmallSelectTest(), resultStream);
+            RunTest(() => new EFLargeSelectTest(), resultStream);
+            RunTest(() => new EFHugeSelectTest(), resultStream);
+            RunTest(() => new EFSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new EFSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new EFSingleSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestEFCC()
+        static void TestEFCC(TextWriter resultStream)
         {
-            using (var test = new EFCCSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new EFCCLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new EFCCHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new EFCCSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new EFCCSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new EFCCSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Entity Framework 6 (change tracking enabled)");
+            RunTest(() => new EFCCSmallSelectTest(), resultStream);
+            RunTest(() => new EFCCLargeSelectTest(), resultStream);
+            RunTest(() => new EFCCHugeSelectTest(), resultStream);
+            RunTest(() => new EFCCSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new EFCCSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new EFCCSingleSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestDapper()
+        static void TestDapper(TextWriter resultStream)
         {
-            using (var test = new DapperSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperSingleDynamicSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperSingleDynamicSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new DapperSingleDynamicSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: Dapper v1.42.0");
+            RunTest(() => new DapperSmallSelectTest(), resultStream);
+            RunTest(() => new DapperLargeSelectTest(), resultStream);
+            RunTest(() => new DapperHugeSelectTest(), resultStream);
+            RunTest(() => new DapperSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new DapperSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new DapperSingleSelectManyTimesTest(50000), resultStream);
+            RunTest(() => new DapperSingleDynamicSelectManyTimesTest(500), resultStream);
+            RunTest(() => new DapperSingleDynamicSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new DapperSingleDynamicSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestOrmLite()
+        static void TestOrmLite(TextWriter resultStream)
         {
-            using (var test = new OrmLiteSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new OrmLiteLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new OrmLiteHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new OrmLiteSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new OrmLiteSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new OrmLiteSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: OrmLite v4.0.56");
+            RunTest(() => new OrmLiteSmallSelectTest(), resultStream);
+            RunTest(() => new OrmLiteLargeSelectTest(), resultStream);
+            RunTest(() => new OrmLiteHugeSelectTest(), resultStream);
+            RunTest(() => new OrmLiteSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new OrmLiteSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new OrmLiteSingleSelectManyTimesTest(50000), resultStream);
         }
 
-        static void TestPetaPoco()
+        static void TestPetaPoco(TextWriter resultStream)
         {
-            using (var test = new PetaPocoSmallSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoLargeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoHugeSelectTest())
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoSingleSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoSingleSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoSingleSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoSingleDynamicSelectManyTimesTest(500))
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoSingleDynamicSelectManyTimesTest(5000))
-            {
-                RunTest(test);
-            }
-            using (var test = new PetaPocoSingleDynamicSelectManyTimesTest(50000))
-            {
-                RunTest(test);
-            }
+            Console.WriteLine("Testing: PetaPoco v5.1.1.171");
+            RunTest(() => new PetaPocoSmallSelectTest(), resultStream);
+            RunTest(() => new PetaPocoLargeSelectTest(), resultStream);
+            RunTest(() => new PetaPocoHugeSelectTest(), resultStream);
+            RunTest(() => new PetaPocoSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new PetaPocoSingleSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new PetaPocoSingleSelectManyTimesTest(50000), resultStream);
+            RunTest(() => new PetaPocoSingleDynamicSelectManyTimesTest(500), resultStream);
+            RunTest(() => new PetaPocoSingleDynamicSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new PetaPocoSingleDynamicSelectManyTimesTest(50000), resultStream);
         }
     }
 }
