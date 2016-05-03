@@ -36,10 +36,11 @@
             {
                 dynamic expando = new ExpandoObject();
                 var expandoDict = (IDictionary<string, object>)expando;
-
+                var values = new object[record.FieldCount];
+                record.GetValues(values);
                 for (int i = 0; i < record.FieldCount; i++)
                 {
-                    var value = record.GetValue(i);
+                    var value = values[i];
                     expandoDict[columns[i]] = (value == DBNull.Value ? null : value);
                 }
                 return expando;
