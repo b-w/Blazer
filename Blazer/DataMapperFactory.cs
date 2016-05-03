@@ -4,10 +4,10 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data;
-    using System.Dynamic;
     using System.Linq.Expressions;
     using System.Reflection;
     using Blazer.Caching;
+    using Blazer.Dynamic;
 
     internal static class DataMapperFactory
     {
@@ -34,16 +34,15 @@
 
             return (record) =>
             {
-                dynamic expando = new ExpandoObject();
-                var expandoDict = (IDictionary<string, object>)expando;
                 var values = new object[record.FieldCount];
+                var blzDynamic = new BlazerDynamicObject(values.Length);
                 record.GetValues(values);
-                for (int i = 0; i < record.FieldCount; i++)
+                for (int i = 0; i < values.Length; i++)
                 {
                     var value = values[i];
-                    expandoDict[columns[i]] = (value == DBNull.Value ? null : value);
+                    blzDynamic.Set(columns[i], (value == DBNull.Value ? null : value));
                 }
-                return expando;
+                return blzDynamic;
             };
         }
 
