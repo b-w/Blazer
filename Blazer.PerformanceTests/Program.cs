@@ -1,11 +1,7 @@
 ﻿namespace Blazer.PerformanceTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Tests;
 
     class Program
@@ -31,6 +27,8 @@
                 TestDapper(sw);
                 TestOrmLite(sw);
                 TestPetaPoco(sw);
+                TestSimpleData(sw);
+                TestMassive(sw);
             }
 
             Console.WriteLine();
@@ -154,6 +152,22 @@
             RunTest(() => new PetaPocoSingleDynamicSelectManyTimesTest(500), resultStream);
             RunTest(() => new PetaPocoSingleDynamicSelectManyTimesTest(5000), resultStream);
             RunTest(() => new PetaPocoSingleDynamicSelectManyTimesTest(50000), resultStream);
+        }
+
+        static void TestSimpleData(TextWriter resultStream)
+        {
+            Console.WriteLine("Testing: Simple.Data v0.19.0");
+            RunTest(() => new SimpleDataSingleDynamicSelectManyTimesTest(500), resultStream);
+            RunTest(() => new SimpleDataSingleDynamicSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new SimpleDataSingleDynamicSelectManyTimesTest(50000), resultStream);
+        }
+
+        static void TestMassive(TextWriter resultStream)
+        {
+            Console.WriteLine("Testing: Massive v2.0");
+            RunTest(() => new MassiveSingleDynamicSelectManyTimesTest(500), resultStream);
+            RunTest(() => new MassiveSingleDynamicSelectManyTimesTest(5000), resultStream);
+            RunTest(() => new MassiveSingleDynamicSelectManyTimesTest(50000), resultStream);
         }
     }
 }

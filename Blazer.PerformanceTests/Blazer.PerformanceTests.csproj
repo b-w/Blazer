@@ -69,6 +69,18 @@
       <HintPath>..\packages\ServiceStack.Text.4.0.56\lib\net40\ServiceStack.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Simple.Data, Version=0.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.Data.Core.0.19.0.0\lib\net40\Simple.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Simple.Data.Ado, Version=0.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.Data.Ado.0.19.0.0\lib\net40\Simple.Data.Ado.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Simple.Data.SqlServer, Version=0.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.Data.SqlServer.0.19.0.0\lib\net40\Simple.Data.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -81,6 +93,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Massive\Massive.Shared.cs" />
+    <Compile Include="Massive\Massive.SqlServer.cs" />
     <Compile Include="Models\Address.cs">
       <DependentUpon>EFModel.tt</DependentUpon>
     </Compile>
@@ -177,6 +191,7 @@
     <Compile Include="Models\Location.cs">
       <DependentUpon>EFModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\MassiveModel.cs" />
     <Compile Include="Models\Password.cs">
       <DependentUpon>EFModel.tt</DependentUpon>
     </Compile>
@@ -330,10 +345,12 @@
     <Compile Include="Tests\Tests.HandCrafted.cs" />
     <Compile Include="Tests\Tests.L2SCC.cs" />
     <Compile Include="Tests\Tests.L2S.cs" />
+    <Compile Include="Tests\Tests.Massive.cs" />
     <Compile Include="Tests\Tests.OrmLite.cs" />
     <Compile Include="Tests\TestBase.cs" />
     <Compile Include="Tests\TestResources.cs" />
     <Compile Include="Tests\TestResult.cs" />
+    <Compile Include="Tests\Tests.SimpleData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
