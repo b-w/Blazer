@@ -54,6 +54,54 @@
         }
     }
 
+    public class PetaPocoDynamicSelectTest : TestBase
+    {
+        IDbConnection m_conn;
+        Database m_db;
+        readonly int m_count;
+
+        public PetaPocoDynamicSelectTest(int count) : base($"PetaPoco v5.1.1.171: SELECT {count:N0} records (dynamic)")
+        {
+            m_count = count;
+        }
+
+        protected override void Warmup()
+        {
+            m_conn = TestResources.GetAdventureWorksConnection();
+            m_conn.Open();
+            m_db = new Database(m_conn);
+            var transactions = m_db.Query<dynamic>("SELECT TOP(@0) * FROM [Production].[TransactionHistory]", 10)
+                .ToList();
+            if (transactions.Count == 0)
+            {
+                throw new ApplicationException();
+            }
+        }
+
+        protected override void DoWork()
+        {
+            var transactions = m_db.Query<dynamic>("SELECT TOP(@0) * FROM [Production].[TransactionHistory]", m_count)
+                .ToList();
+            if (!transactions.All(x => x.TransactionID > 0))
+            {
+                throw new ApplicationException();
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!m_disposed)
+            {
+                if (disposing)
+                {
+                    m_conn.Close();
+                    m_conn.Dispose();
+                }
+                m_disposed = true;
+            }
+        }
+    }
+
     public class PetaPocoSingleSelectManyTimesTest : TestBase
     {
         IDbConnection m_conn;

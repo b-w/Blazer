@@ -3,6 +3,50 @@
     using System;
     using Simple.Data;
 
+    public class SimpleDataDynamicSelectTest : TestBase
+    {
+        Database m_db;
+        readonly int m_count;
+
+        public SimpleDataDynamicSelectTest(int count) : base($"Simple.Data v0.19.0: SELECT {count:N0} records (dynamic)")
+        {
+            m_count = count;
+        }
+
+        protected override void Warmup()
+        {
+            m_db = Database.OpenConnection(TestResources.CONN_ADVWORKS);
+            var transactions = m_db["Production"]["TransactionHistory"].All().Take(10);
+            foreach (var transaction in transactions)
+            {
+                if (transaction.TransactionID <= 0)
+                {
+                    throw new ApplicationException();
+                }
+            }
+        }
+
+        protected override void DoWork()
+        {
+            var transactions = m_db["Production"]["TransactionHistory"].All().Take(m_count);
+            foreach (var transaction in transactions)
+            {
+                if (transaction.TransactionID <= 0)
+                {
+                    throw new ApplicationException();
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!m_disposed)
+            {
+                m_disposed = true;
+            }
+        }
+    }
+
     public class SimpleDataSingleDynamicSelectManyTimesTest : TestBase
     {
         Database m_db;
