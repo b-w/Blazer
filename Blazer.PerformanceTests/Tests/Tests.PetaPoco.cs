@@ -6,13 +6,15 @@
     using Models.AdventureWorks;
     using PetaPoco;
 
-    public class PetaPocoSmallSelectTest : TestBase
+    public class PetaPocoSelectTest : TestBase
     {
         IDbConnection m_conn;
         Database m_db;
+        readonly int m_count;
 
-        public PetaPocoSmallSelectTest() : base("PetaPoco v5.1.1.171: SELECT 500 records")
+        public PetaPocoSelectTest(int count) : base($"PetaPoco v5.1.1.171: SELECT {count:N0} records")
         {
+            m_count = count;
         }
 
         protected override void Warmup()
@@ -20,99 +22,7 @@
             m_conn = TestResources.GetAdventureWorksConnection();
             m_conn.Open();
             m_db = new Database(m_conn);
-            var products = m_db.Query<Product>("SELECT * FROM [Production].[Product] WHERE [ProductID] < 10")
-                .ToList();
-            if (products.Count == 0)
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void DoWork()
-        {
-            var products = m_db.Query<Product>("SELECT * FROM [Production].[Product] WHERE [ProductID] > 10")
-                .ToList();
-            if (!products.All(x => x.ProductID > 0))
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                {
-                    m_conn.Close();
-                    m_conn.Dispose();
-                }
-                m_disposed = true;
-            }
-        }
-    }
-
-    public class PetaPocoLargeSelectTest : TestBase
-    {
-        IDbConnection m_conn;
-        Database m_db;
-
-        public PetaPocoLargeSelectTest() : base("PetaPoco v5.1.1.171: SELECT 5.000 records")
-        {
-        }
-
-        protected override void Warmup()
-        {
-            m_conn = TestResources.GetAdventureWorksConnection();
-            m_conn.Open();
-            m_db = new Database(m_conn);
-            var orderDetails = m_db.Query<PurchaseOrderDetail>("SELECT * FROM [Purchasing].[PurchaseOrderDetail] WHERE [PurchaseOrderDetailID] < 10")
-                .ToList();
-            if (orderDetails.Count == 0)
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void DoWork()
-        {
-            var orderDetails = m_db.Query<PurchaseOrderDetail>("SELECT TOP(5000) * FROM [Purchasing].[PurchaseOrderDetail] WHERE [PurchaseOrderDetailID] > 10")
-                .ToList();
-            if (!orderDetails.All(x => x.PurchaseOrderDetailID > 0))
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                {
-                    m_conn.Close();
-                    m_conn.Dispose();
-                }
-                m_disposed = true;
-            }
-        }
-    }
-
-    public class PetaPocoHugeSelectTest : TestBase
-    {
-        IDbConnection m_conn;
-        Database m_db;
-
-        public PetaPocoHugeSelectTest() : base("PetaPoco v5.1.1.171: SELECT 50.000 records")
-        {
-        }
-
-        protected override void Warmup()
-        {
-            m_conn = TestResources.GetAdventureWorksConnection();
-            m_conn.Open();
-            m_db = new Database(m_conn);
-            var transactions = m_db.Query<TransactionHistory>("SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] < 100010")
+            var transactions = m_db.Query<TransactionHistory>("SELECT TOP(@0) * FROM [Production].[TransactionHistory]", 10)
                 .ToList();
             if (transactions.Count == 0)
             {
@@ -122,7 +32,7 @@
 
         protected override void DoWork()
         {
-            var transactions = m_db.Query<TransactionHistory>("SELECT TOP(50000) * FROM [Production].[TransactionHistory] WHERE [TransactionID] > 100010")
+            var transactions = m_db.Query<TransactionHistory>("SELECT TOP(@0) * FROM [Production].[TransactionHistory]", m_count)
                 .ToList();
             if (!transactions.All(x => x.TransactionID > 0))
             {

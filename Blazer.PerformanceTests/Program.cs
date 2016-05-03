@@ -51,9 +51,9 @@
         static void TestHandCrafted(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Hand-Crafted ADO.NET");
-            RunTest(() => new HCSmallSelectTest(), resultStream);
-            RunTest(() => new HCLargeSelectTest(), resultStream);
-            RunTest(() => new HCHugeSelectTest(), resultStream);
+            RunTest(() => new HCSelectTest(500), resultStream);
+            RunTest(() => new HCSelectTest(5000), resultStream);
+            RunTest(() => new HCSelectTest(50000), resultStream);
             RunTest(() => new HCSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new HCSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new HCSingleSelectManyTimesTest(50000), resultStream);
@@ -62,9 +62,9 @@
         static void TestBlazer(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Blazer");
-            RunTest(() => new BlazerSmallSelectTest(), resultStream);
-            RunTest(() => new BlazerLargeSelectTest(), resultStream);
-            RunTest(() => new BlazerHugeSelectTest(), resultStream);
+            RunTest(() => new BlazerSelectTest(500), resultStream);
+            RunTest(() => new BlazerSelectTest(5000), resultStream);
+            RunTest(() => new BlazerSelectTest(50000), resultStream);
             RunTest(() => new BlazerSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new BlazerSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new BlazerSingleSelectManyTimesTest(50000), resultStream);
@@ -76,9 +76,9 @@
         static void TestL2S(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Linq2SQL");
-            RunTest(() => new L2SSmallSelectTest(), resultStream);
-            RunTest(() => new L2SLargeSelectTest(), resultStream);
-            RunTest(() => new L2SHugeSelectTest(), resultStream);
+            RunTest(() => new L2SSelectTest(500), resultStream);
+            RunTest(() => new L2SSelectTest(5000), resultStream);
+            RunTest(() => new L2SSelectTest(50000), resultStream);
             RunTest(() => new L2SSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new L2SSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new L2SSingleSelectManyTimesTest(50000), resultStream);
@@ -87,9 +87,9 @@
         static void TestL2SCC(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Linq2SQL (change tracking enabled)");
-            RunTest(() => new L2SCCSmallSelectTest(), resultStream);
-            RunTest(() => new L2SCCLargeSelectTest(), resultStream);
-            RunTest(() => new L2SCCHugeSelectTest(), resultStream);
+            RunTest(() => new L2SCCSelectTest(500), resultStream);
+            RunTest(() => new L2SCCSelectTest(5000), resultStream);
+            RunTest(() => new L2SCCSelectTest(50000), resultStream);
             RunTest(() => new L2SCCSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new L2SCCSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new L2SCCSingleSelectManyTimesTest(50000), resultStream);
@@ -98,9 +98,9 @@
         static void TestEF(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Entity Framework 6");
-            RunTest(() => new EFSmallSelectTest(), resultStream);
-            RunTest(() => new EFLargeSelectTest(), resultStream);
-            RunTest(() => new EFHugeSelectTest(), resultStream);
+            RunTest(() => new EFSelectTest(500), resultStream);
+            RunTest(() => new EFSelectTest(5000), resultStream);
+            RunTest(() => new EFSelectTest(50000), resultStream);
             RunTest(() => new EFSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new EFSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new EFSingleSelectManyTimesTest(50000), resultStream);
@@ -109,9 +109,9 @@
         static void TestEFCC(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Entity Framework 6 (change tracking enabled)");
-            RunTest(() => new EFCCSmallSelectTest(), resultStream);
-            RunTest(() => new EFCCLargeSelectTest(), resultStream);
-            RunTest(() => new EFCCHugeSelectTest(), resultStream);
+            RunTest(() => new EFCCSelectTest(500), resultStream);
+            RunTest(() => new EFCCSelectTest(5000), resultStream);
+            RunTest(() => new EFCCSelectTest(50000), resultStream);
             RunTest(() => new EFCCSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new EFCCSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new EFCCSingleSelectManyTimesTest(50000), resultStream);
@@ -120,9 +120,9 @@
         static void TestDapper(TextWriter resultStream)
         {
             Console.WriteLine("Testing: Dapper v1.42.0");
-            RunTest(() => new DapperSmallSelectTest(), resultStream);
-            RunTest(() => new DapperLargeSelectTest(), resultStream);
-            RunTest(() => new DapperHugeSelectTest(), resultStream);
+            RunTest(() => new DapperSelectTest(500), resultStream);
+            RunTest(() => new DapperSelectTest(5000), resultStream);
+            RunTest(() => new DapperSelectTest(50000), resultStream);
             RunTest(() => new DapperSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new DapperSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new DapperSingleSelectManyTimesTest(50000), resultStream);
@@ -134,9 +134,9 @@
         static void TestOrmLite(TextWriter resultStream)
         {
             Console.WriteLine("Testing: OrmLite v4.0.56");
-            RunTest(() => new OrmLiteSmallSelectTest(), resultStream);
-            RunTest(() => new OrmLiteLargeSelectTest(), resultStream);
-            RunTest(() => new OrmLiteHugeSelectTest(), resultStream);
+            RunTest(() => new OrmLiteSelectTest(500), resultStream);
+            RunTest(() => new OrmLiteSelectTest(5000), resultStream);
+            RunTest(() => new OrmLiteSelectTest(50000), resultStream);
             RunTest(() => new OrmLiteSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new OrmLiteSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new OrmLiteSingleSelectManyTimesTest(50000), resultStream);
@@ -145,9 +145,9 @@
         static void TestPetaPoco(TextWriter resultStream)
         {
             Console.WriteLine("Testing: PetaPoco v5.1.1.171");
-            RunTest(() => new PetaPocoSmallSelectTest(), resultStream);
-            RunTest(() => new PetaPocoLargeSelectTest(), resultStream);
-            RunTest(() => new PetaPocoHugeSelectTest(), resultStream);
+            RunTest(() => new PetaPocoSelectTest(500), resultStream);
+            RunTest(() => new PetaPocoSelectTest(5000), resultStream);
+            RunTest(() => new PetaPocoSelectTest(50000), resultStream);
             RunTest(() => new PetaPocoSingleSelectManyTimesTest(500), resultStream);
             RunTest(() => new PetaPocoSingleSelectManyTimesTest(5000), resultStream);
             RunTest(() => new PetaPocoSingleSelectManyTimesTest(50000), resultStream);

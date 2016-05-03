@@ -4,103 +4,14 @@
     using System.Linq;
     using Models.L2S;
 
-    public class L2SCCSmallSelectTest : TestBase
+    public class L2SCCSelectTest : TestBase
     {
         L2SModelDataContext m_ctx;
+        readonly int m_count;
 
-        public L2SCCSmallSelectTest() : base("Linq2SQL (change tracking): SELECT 500 records")
+        public L2SCCSelectTest(int count) : base($"Linq2SQL: SELECT {count:N0} records")
         {
-        }
-
-        protected override void Warmup()
-        {
-            m_ctx = new L2SModelDataContext();
-            m_ctx.ObjectTrackingEnabled = true;
-            var products = m_ctx.Products
-                .Where(x => x.ProductID < 10)
-                .ToList();
-            if (products.Count == 0)
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void DoWork()
-        {
-            var products = m_ctx.Products
-                .Where(x => x.ProductID > 10)
-                .ToList();
-            if (!products.All(x => x.ProductID > 0))
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                {
-                    m_ctx.Dispose();
-                }
-                m_disposed = true;
-            }
-        }
-    }
-
-    public class L2SCCLargeSelectTest : TestBase
-    {
-        L2SModelDataContext m_ctx;
-
-        public L2SCCLargeSelectTest() : base("Linq2SQL (change tracking): SELECT 5.000 records")
-        {
-        }
-
-        protected override void Warmup()
-        {
-            m_ctx = new L2SModelDataContext();
-            m_ctx.ObjectTrackingEnabled = true;
-            var orderDetails = m_ctx.PurchaseOrderDetails
-                .Where(x => x.PurchaseOrderDetailID < 10)
-                .ToList();
-            if (orderDetails.Count == 0)
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void DoWork()
-        {
-            var orderDetails = m_ctx.PurchaseOrderDetails
-                .Where(x => x.PurchaseOrderDetailID > 10)
-                .Take(5000)
-                .ToList();
-            if (!orderDetails.All(x => x.PurchaseOrderDetailID > 0))
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                {
-                    m_ctx.Dispose();
-                }
-                m_disposed = true;
-            }
-        }
-    }
-
-    public class L2SCCHugeSelectTest : TestBase
-    {
-        L2SModelDataContext m_ctx;
-
-        public L2SCCHugeSelectTest() : base("Linq2SQL (change tracking): SELECT 50.000 records")
-        {
+            m_count = count;
         }
 
         protected override void Warmup()
@@ -108,7 +19,7 @@
             m_ctx = new L2SModelDataContext();
             m_ctx.ObjectTrackingEnabled = true;
             var transactions = m_ctx.TransactionHistories
-                .Where(x => x.TransactionID < 100010)
+                .Take(10)
                 .ToList();
             if (transactions.Count == 0)
             {
@@ -119,8 +30,7 @@
         protected override void DoWork()
         {
             var transactions = m_ctx.TransactionHistories
-                .Where(x => x.TransactionID > 100010)
-                .Take(50000)
+                .Take(m_count)
                 .ToList();
             if (!transactions.All(x => x.TransactionID > 0))
             {

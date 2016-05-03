@@ -6,107 +6,21 @@
     using Blazer;
     using Models.AdventureWorks;
 
-    public class BlazerSmallSelectTest : TestBase
+    public class BlazerSelectTest : TestBase
     {
         IDbConnection m_conn;
+        readonly int m_count;
 
-        public BlazerSmallSelectTest() : base("Blazer: SELECT 500 records")
+        public BlazerSelectTest(int count) : base($"Blazer: SELECT {count:N0} records")
         {
+            m_count = count;
         }
 
         protected override void Warmup()
         {
             m_conn = TestResources.GetAdventureWorksConnection();
             m_conn.Open();
-            var products = m_conn.Query<Product>("SELECT * FROM [Production].[Product] WHERE [ProductID] < 10")
-                .ToList();
-            if (products.Count == 0)
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void DoWork()
-        {
-            var products = m_conn.Query<Product>("SELECT * FROM [Production].[Product] WHERE [ProductID] > 10")
-                .ToList();
-            if (!products.All(x => x.ProductID > 0))
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                {
-                    m_conn.Close();
-                    m_conn.Dispose();
-                }
-                m_disposed = true;
-            }
-        }
-    }
-
-    public class BlazerLargeSelectTest : TestBase
-    {
-        IDbConnection m_conn;
-
-        public BlazerLargeSelectTest() : base("Blazer: SELECT 5.000 records")
-        {
-        }
-
-        protected override void Warmup()
-        {
-            m_conn = TestResources.GetAdventureWorksConnection();
-            m_conn.Open();
-            var orderDetails = m_conn.Query<PurchaseOrderDetail>("SELECT * FROM [Purchasing].[PurchaseOrderDetail] WHERE [PurchaseOrderDetailID] < 10")
-                .ToList();
-            if (orderDetails.Count == 0)
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void DoWork()
-        {
-            var orderDetails = m_conn.Query<PurchaseOrderDetail>("SELECT TOP(5000) * FROM [Purchasing].[PurchaseOrderDetail] WHERE [PurchaseOrderDetailID] > 10")
-                .ToList();
-            if (!orderDetails.All(x => x.PurchaseOrderDetailID > 0))
-            {
-                throw new ApplicationException();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!m_disposed)
-            {
-                if (disposing)
-                {
-                    m_conn.Close();
-                    m_conn.Dispose();
-                }
-                m_disposed = true;
-            }
-        }
-    }
-
-    public class BlazerHugeSelectTest : TestBase
-    {
-        IDbConnection m_conn;
-
-        public BlazerHugeSelectTest() : base("Blazer: SELECT 50.000 records")
-        {
-        }
-
-        protected override void Warmup()
-        {
-            m_conn = TestResources.GetAdventureWorksConnection();
-            m_conn.Open();
-            var transactions = m_conn.Query<TransactionHistory>("SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] < 100010")
+            var transactions = m_conn.Query<TransactionHistory>("SELECT TOP(@count) * FROM [Production].[TransactionHistory]", new { count = 10 })
                 .ToList();
             if (transactions.Count == 0)
             {
@@ -116,7 +30,7 @@
 
         protected override void DoWork()
         {
-            var transactions = m_conn.Query<TransactionHistory>("SELECT TOP(50000) * FROM [Production].[TransactionHistory] WHERE [TransactionID] > 100010")
+            var transactions = m_conn.Query<TransactionHistory>("SELECT TOP(@count) * FROM [Production].[TransactionHistory]", new { count = m_count })
                 .ToList();
             if (!transactions.All(x => x.TransactionID > 0))
             {
