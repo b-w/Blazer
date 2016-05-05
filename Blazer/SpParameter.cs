@@ -1,5 +1,6 @@
 ﻿namespace Blazer
 {
+    using System;
     using System.Data;
 
     internal sealed class SpParameter
@@ -26,7 +27,7 @@
             if (dbParameter.Direction == ParameterDirection.Input
                 || dbParameter.Direction == ParameterDirection.InputOutput)
             {
-                dbParameter.Value = this.Value;
+                dbParameter.Value = this.Value ?? DBNull.Value;
             }
             if (this.Size.HasValue)
             {

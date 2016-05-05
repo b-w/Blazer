@@ -9,17 +9,22 @@
         readonly Dictionary<string, SpParameter> m_params = new Dictionary<string, SpParameter>();
         SpParameter m_return = null;
 
-        public void AddInput(string name, object value, int? size = null, byte? precision = null, byte? scale = null)
+        public void AddInput(string name, object value, DbType? dbType = null, int? size = null, byte? precision = null, byte? scale = null)
         {
-            DbType dbType;
-            if (DbTypeStore.TryGetDbType(value.GetType(), out dbType))
+            DbType dbTypeValue;
+            if (dbType.HasValue)
             {
-                m_params.Add(name, GetSpParam(name, dbType, ParameterDirection.Input, value, size, precision, scale));
+                dbTypeValue = dbType.Value;
             }
-            else
+            else if (value == null)
+            {
+                throw new ArgumentException($"Argument '{nameof(dbType)}' cannot be null if '{nameof(value)}' is null.");
+            }
+            else if (!DbTypeStore.TryGetDbType(value.GetType(), out dbTypeValue))
             {
                 throw new NotSupportedException($"Parameter of type {value.GetType()} is not supported.");
             }
+            m_params.Add(name, GetSpParam(name, dbTypeValue, ParameterDirection.Input, value, size, precision, scale));
         }
 
         public void AddOutput(string name, DbType dbType, int? size = null, byte? precision = null, byte? scale = null)
@@ -27,17 +32,22 @@
             m_params.Add(name, GetSpParam(name, dbType, ParameterDirection.Output, null, size, precision, scale));
         }
 
-        public void AddInputOutput(string name, object value, int? size = null, byte? precision = null, byte? scale = null)
+        public void AddInputOutput(string name, object value, DbType? dbType = null, int? size = null, byte? precision = null, byte? scale = null)
         {
-            DbType dbType;
-            if (DbTypeStore.TryGetDbType(value.GetType(), out dbType))
+            DbType dbTypeValue;
+            if (dbType.HasValue)
             {
-                m_params.Add(name, GetSpParam(name, dbType, ParameterDirection.InputOutput, value, size, precision, scale));
+                dbTypeValue = dbType.Value;
             }
-            else
+            else if (value == null)
+            {
+                throw new ArgumentException($"Argument '{nameof(dbType)}' cannot be null if '{nameof(value)}' is null.");
+            }
+            else if (!DbTypeStore.TryGetDbType(value.GetType(), out dbTypeValue))
             {
                 throw new NotSupportedException($"Parameter of type {value.GetType()} is not supported.");
             }
+            m_params.Add(name, GetSpParam(name, dbTypeValue, ParameterDirection.InputOutput, value, size, precision, scale));
         }
 
         public void SetReturn(string name, DbType dbType, int? size = null, byte? precision = null, byte? scale = null)
