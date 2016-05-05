@@ -125,7 +125,7 @@
             var rng = new Random();
             for (int i = 0; i < m_count; i++)
             {
-                var transaction = m_conn.FirstOrDefault<TransactionHistory>(
+                var transaction = m_conn.QuerySingle<TransactionHistory>(
                     "SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = @Id",
                     new { Id = rng.Next(100000, 200000) });
                 if (transaction != null && transaction.ProductID <= 0)
@@ -176,7 +176,7 @@
             var rng = new Random();
             for (int i = 0; i < m_count; i++)
             {
-                var transaction = m_conn.FirstOrDefault(
+                var transaction = m_conn.QuerySingle(
                     "SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = @Id",
                     new { Id = rng.Next(100000, 200000) });
                 if (transaction != null && transaction.ProductID <= 0)

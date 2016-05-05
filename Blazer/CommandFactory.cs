@@ -1,13 +1,14 @@
 ﻿namespace Blazer
 {
     using System.Data;
+    using System.Threading;
 
     internal static class CommandFactory
     {
         public static IDbCommand CreateCommand(IDbConnection connection, string commandText, CommandConfiguration commandConfig)
         {
             var defaultConfig = CommandConfiguration.Default.Copy();
-            var missingOptionBehaviour = CommandConfiguration.OnUnsetConfigurationOption;
+            var missingOptionBehavior = CommandConfiguration.OnUnsetConfigurationOption;
 
             var command = connection.CreateCommand();
             command.CommandText = commandText;
@@ -18,7 +19,7 @@
                 {
                     command.CommandTimeout = commandConfig.Timeout.Value;
                 }
-                else if (missingOptionBehaviour == UnsetConfigurationOptionBehaviour.UseDefault
+                else if (missingOptionBehavior == UnsetConfigurationOptionBehavior.UseDefault
                     && defaultConfig.Timeout.HasValue)
                 {
                     command.CommandTimeout = defaultConfig.Timeout.Value;
@@ -28,7 +29,7 @@
                 {
                     command.CommandType = commandConfig.CommandType.Value;
                 }
-                else if (missingOptionBehaviour == UnsetConfigurationOptionBehaviour.UseDefault
+                else if (missingOptionBehavior == UnsetConfigurationOptionBehavior.UseDefault
                     && defaultConfig.CommandType.HasValue)
                 {
                     command.CommandType = defaultConfig.CommandType.Value;
@@ -53,6 +54,15 @@
             }
 
             return command;
+        }
+
+        public static CancellationToken GetCancellationToken(CommandConfiguration commandConfig)
+        {
+            if (commandConfig != null && commandConfig.AsyncCancellationToken.HasValue)
+            {
+                return commandConfig.AsyncCancellationToken.Value;
+            }
+            return CancellationToken.None;
         }
     }
 }

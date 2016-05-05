@@ -3,21 +3,23 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Data.Common;
+    using System.Threading.Tasks;
 
     public static partial class BlazerExtensions
     {
-        const CommandBehavior s_defaultCommandBehavior = CommandBehavior.SequentialAccess | CommandBehavior.SingleResult;
-
-        public static T Scalar<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
+        public static async Task<T> ScalarAsync<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
                 }
 
-                var value = cmd.ExecuteScalar();
+                var value = await cmd.ExecuteScalarAsync(cancelToken).ConfigureAwait(false);
                 if (value == null || value == DBNull.Value)
                 {
                     return default(T);
@@ -26,52 +28,60 @@
             }
         }
 
-        public static int Command(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
+        public static async Task<int> CommandAsync(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
                 }
 
-                return cmd.ExecuteNonQuery();
+                return await cmd.ExecuteNonQueryAsync(cancelToken).ConfigureAwait(false);
             }
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
+        public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
                 }
 
-                using (var reader = cmd.ExecuteReader(s_defaultCommandBehavior))
+                using (var reader = await cmd.ExecuteReaderAsync(s_defaultCommandBehavior, cancelToken).ConfigureAwait(false))
                 {
+                    var results = new List<T>();
                     var mapper = DataMapperFactory.GetMapper<T>(cmd, reader);
-                    while (reader.Read())
+                    while (await reader.ReadAsync(cancelToken).ConfigureAwait(false))
                     {
-                        yield return (T)mapper(reader);
+                        results.Add((T)mapper(reader));
                     }
+                    return results;
                 }
             }
         }
 
-        public static T QuerySingle<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
+        public static async Task<T> QuerySingleAsync<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
                 }
 
-                using (var reader = cmd.ExecuteReader(s_defaultCommandBehavior | CommandBehavior.SingleRow))
+                using (var reader = await cmd.ExecuteReaderAsync(s_defaultCommandBehavior | CommandBehavior.SingleRow, cancelToken).ConfigureAwait(false))
                 {
                     var mapper = DataMapperFactory.GetMapper<T>(cmd, reader);
-                    if (reader.Read())
+                    if (await reader.ReadAsync(cancelToken).ConfigureAwait(false))
                     {
                         return (T)mapper(reader);
                     }
@@ -80,39 +90,45 @@
             }
         }
 
-        public static IEnumerable<dynamic> Query(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
+        public static async Task<IEnumerable<dynamic>> QueryAsync(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
                 }
 
-                using (var reader = cmd.ExecuteReader(s_defaultCommandBehavior))
+                using (var reader = await cmd.ExecuteReaderAsync(s_defaultCommandBehavior, cancelToken).ConfigureAwait(false))
                 {
+                    var results = new List<dynamic>();
                     var mapper = DataMapperFactory.GetMapper(reader);
-                    while (reader.Read())
+                    while (await reader.ReadAsync(cancelToken).ConfigureAwait(false))
                     {
-                        yield return mapper(reader);
+                        results.Add(mapper(reader));
                     }
+                    return results;
                 }
             }
         }
 
-        public static dynamic QuerySingle(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
+        public static async Task<dynamic> QuerySingleAsync(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
                 }
 
-                using (var reader = cmd.ExecuteReader(s_defaultCommandBehavior | CommandBehavior.SingleRow))
+                using (var reader = await cmd.ExecuteReaderAsync(s_defaultCommandBehavior | CommandBehavior.SingleRow, cancelToken).ConfigureAwait(false))
                 {
                     var mapper = DataMapperFactory.GetMapper(reader);
-                    if (reader.Read())
+                    if (await reader.ReadAsync(cancelToken).ConfigureAwait(false))
                     {
                         return mapper(reader);
                     }
@@ -121,13 +137,15 @@
             }
         }
 
-        public static void StoredProcedure(this IDbConnection connection, string command, SpParameters parameters = null, CommandConfiguration config = null)
+        public static async Task StoredProcedureAsync(this IDbConnection connection, string command, SpParameters parameters = null, CommandConfiguration config = null)
         {
-            using (var cmd = CommandFactory.CreateCommand(connection, command, config))
+            using (var cmd = (DbCommand)CommandFactory.CreateCommand(connection, command, config))
             {
+                var cancelToken = CommandFactory.GetCancellationToken(config);
+
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                var paramPairs = new List<Tuple<SpParameter, IDbDataParameter>>();
+                var paramPairs = new List<Tuple<SpParameter, DbParameter>>();
                 if (parameters != null)
                 {
                     foreach (var spParam in parameters.Parameters)
@@ -149,7 +167,7 @@
                     }
                 }
 
-                cmd.ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync(cancelToken);
 
                 if (paramPairs.Count > 0)
                 {

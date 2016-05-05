@@ -61,6 +61,7 @@
     <Compile Include="TestResources.cs" />
     <Compile Include="QueryDataTypeTests.cs" />
     <Compile Include="StoredProcedureTests.cs" />
+    <Compile Include="AsyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Blazer\Blazer.csproj">

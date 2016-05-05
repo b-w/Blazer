@@ -3,14 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Blazer;
+    using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class QueryTests
+    public class AsyncTests
     {
         [TestMethod]
-        public void Query_Basic()
+        public async Task Async_Query_Basic()
         {
             // arrange
             AWProduct product;
@@ -19,7 +19,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = await conn.QuerySingleAsync<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -32,7 +32,7 @@
         }
 
         [TestMethod]
-        public void Query_Multiple_Records()
+        public async Task Async_Query_Multiple_Records()
         {
             // arrange
             IList<AWProduct> products;
@@ -41,7 +41,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                products = conn.Query<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] < 100")
+                products = (await conn.QueryAsync<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] < 100"))
                     .ToList();
                 conn.Close();
             }
@@ -63,7 +63,7 @@
         }
 
         [TestMethod]
-        public void Query_Dynamic_Single()
+        public async Task Async_Query_Dynamic_Single()
         {
             // arrange
             dynamic product;
@@ -72,7 +72,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.QuerySingle("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = await conn.QuerySingleAsync("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -85,7 +85,7 @@
         }
 
         [TestMethod]
-        public void Query_Dynamic_Multiple()
+        public async Task Async_Query_Dynamic_Multiple()
         {
             // arrange
             IList<dynamic> products;
@@ -94,7 +94,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                products = conn.Query("SELECT * FROM [Production].[Product] WHERE [ProductID] < 100")
+                products = (await conn.QueryAsync("SELECT * FROM [Production].[Product] WHERE [ProductID] < 100"))
                     .ToList();
                 conn.Close();
             }

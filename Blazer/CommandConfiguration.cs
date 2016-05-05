@@ -5,9 +5,9 @@
 
     public class DefaultCommandConfiguration
     {
-        private readonly ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-        private int? m_timeout;
-        private CommandType? m_commandType;
+        readonly ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
+        int? m_timeout;
+        CommandType? m_commandType;
 
         internal DefaultCommandConfiguration()
         {
@@ -71,7 +71,7 @@
         }
     }
 
-    public enum UnsetConfigurationOptionBehaviour
+    public enum UnsetConfigurationOptionBehavior
     {
         Ignore = 0,
         UseDefault
@@ -82,13 +82,15 @@
         static CommandConfiguration()
         {
             Default = new DefaultCommandConfiguration();
-            OnUnsetConfigurationOption = UnsetConfigurationOptionBehaviour.UseDefault;
+            OnUnsetConfigurationOption = UnsetConfigurationOptionBehavior.UseDefault;
         }
 
         public static DefaultCommandConfiguration Default { get; protected set; }
 
-        public static UnsetConfigurationOptionBehaviour OnUnsetConfigurationOption { get; set; }
+        public static UnsetConfigurationOptionBehavior OnUnsetConfigurationOption { get; set; }
 
         public IDbTransaction Transaction { get; set; }
+
+        public CancellationToken? AsyncCancellationToken { get; set; }
     }
 }

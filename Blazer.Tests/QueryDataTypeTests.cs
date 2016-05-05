@@ -29,7 +29,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -47,8 +47,8 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product1 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
-                product2 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 332 });
+                product1 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product2 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 332 });
                 conn.Close();
             }
 
@@ -67,8 +67,8 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product1 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
-                product2 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 326 });
+                product1 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product2 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 326 });
                 conn.Close();
             }
 
@@ -87,7 +87,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                document = conn.First<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Repair and Service Guidelines" });
+                document = conn.QuerySingle<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Repair and Service Guidelines" });
                 conn.Close();
             }
 
@@ -105,7 +105,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -123,7 +123,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -141,8 +141,8 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product1 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
-                product2 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 680 });
+                product1 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product2 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 680 });
                 conn.Close();
             }
 
@@ -161,7 +161,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 680 });
+                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 680 });
                 conn.Close();
             }
 
@@ -179,8 +179,8 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                salesPerson1 = conn.First<AWSalesPerson>("SELECT * FROM [Sales].[SalesPerson] WHERE [BusinessEntityID] = @Id", new { Id = 274 });
-                salesPerson2 = conn.First<AWSalesPerson>("SELECT * FROM [Sales].[SalesPerson] WHERE [BusinessEntityID] = @Id", new { Id = 275 });
+                salesPerson1 = conn.QuerySingle<AWSalesPerson>("SELECT * FROM [Sales].[SalesPerson] WHERE [BusinessEntityID] = @Id", new { Id = 274 });
+                salesPerson2 = conn.QuerySingle<AWSalesPerson>("SELECT * FROM [Sales].[SalesPerson] WHERE [BusinessEntityID] = @Id", new { Id = 275 });
                 conn.Close();
             }
 
@@ -199,7 +199,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -217,7 +217,7 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
                 conn.Close();
             }
 
@@ -235,8 +235,8 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                product1 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
-                product2 = conn.First<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 709 });
+                product1 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 328 });
+                product2 = conn.QuerySingle<AWProduct>("SELECT * FROM [Production].[Product] WHERE [ProductID] = @Id", new { Id = 709 });
                 conn.Close();
             }
 
@@ -255,8 +255,8 @@
             using (var conn = TestResources.GetAdventureWorksConnection())
             {
                 conn.Open();
-                doc1 = conn.First<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Overview" });
-                doc2 = conn.First<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Introduction 1" });
+                doc1 = conn.QuerySingle<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Overview" });
+                doc2 = conn.QuerySingle<AWDocument>("SELECT * FROM [Production].[Document] WHERE [Title] = @Title", new { Title = "Introduction 1" });
                 conn.Close();
             }
 
