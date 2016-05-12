@@ -104,7 +104,7 @@
                 using (var reader = await cmd.ExecuteReaderAsync(s_defaultCommandBehavior, cancelToken).ConfigureAwait(false))
                 {
                     var results = new List<dynamic>();
-                    var mapper = DataMapperFactory.GetMapper(reader);
+                    var mapper = DataMapperFactory.GetMapper(cmd, reader);
                     while (await reader.ReadAsync(cancelToken).ConfigureAwait(false))
                     {
                         results.Add(mapper(reader));
@@ -127,7 +127,7 @@
 
                 using (var reader = await cmd.ExecuteReaderAsync(s_defaultCommandBehavior | CommandBehavior.SingleRow, cancelToken).ConfigureAwait(false))
                 {
-                    var mapper = DataMapperFactory.GetMapper(reader);
+                    var mapper = DataMapperFactory.GetMapper(cmd, reader);
                     if (await reader.ReadAsync(cancelToken).ConfigureAwait(false))
                     {
                         return mapper(reader);

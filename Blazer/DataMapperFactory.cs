@@ -24,15 +24,22 @@
 
         public delegate object DataMapper(IDataRecord record);
 
-        public static DataMapper GetMapper(IDataReader reader)
+        public static DataMapper GetMapper(IDbCommand command, IDataReader reader)
         {
+            var cacheKey = new DataMapperCache.Key(command, typeof(BlazerDynamicObject));
+            DataMapper cachedMapper;
+            if (DataMapperCache.TryGet(cacheKey, out cachedMapper))
+            {
+                return cachedMapper;
+            }
+
             var columns = new string[reader.FieldCount];
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 columns[i] = reader.GetName(i);
             }
 
-            return (record) =>
+            DataMapper lambda = (record) =>
             {
                 var values = new object[record.FieldCount];
                 var blzDynamic = new BlazerDynamicObject(values.Length);
@@ -44,6 +51,10 @@
                 }
                 return blzDynamic;
             };
+
+            DataMapperCache.Add(cacheKey, lambda);
+
+            return lambda;
         }
 
         public static DataMapper GetMapper<T>(IDbCommand command, IDataReader reader) where T : new()

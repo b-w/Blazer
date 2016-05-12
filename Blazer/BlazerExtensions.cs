@@ -91,7 +91,7 @@
 
                 using (var reader = cmd.ExecuteReader(s_defaultCommandBehavior))
                 {
-                    var mapper = DataMapperFactory.GetMapper(reader);
+                    var mapper = DataMapperFactory.GetMapper(cmd, reader);
                     while (reader.Read())
                     {
                         yield return mapper(reader);
@@ -111,7 +111,7 @@
 
                 using (var reader = cmd.ExecuteReader(s_defaultCommandBehavior | CommandBehavior.SingleRow))
                 {
-                    var mapper = DataMapperFactory.GetMapper(reader);
+                    var mapper = DataMapperFactory.GetMapper(cmd, reader);
                     if (reader.Read())
                     {
                         return mapper(reader);
