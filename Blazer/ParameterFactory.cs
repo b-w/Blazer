@@ -36,7 +36,7 @@
 
             var commandParamsType = typeof(IList);
             var commandParamsProperty = commandType.GetProperty("Parameters", FLAGS_PUBINST);
-            var commandParamsAddMethod = commandParamsType.GetMethod("Add", FLAGS_PUBINST | BindingFlags.FlattenHierarchy);
+            var commandParamsAddMethod = commandParamsType.GetMethod("Add", FLAGS_PUBINST);
 
             var paramType = typeof(IDataParameter);
             var paramDbTypeProperty = paramType.GetProperty("DbType", FLAGS_PUBINST);

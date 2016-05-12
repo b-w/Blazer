@@ -20,7 +20,7 @@
             public int FieldIndex { get; set; }
         }
 
-        const BindingFlags FLAGS_ALLINST = BindingFlags.Instance | BindingFlags.Public;
+        const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
 
         public delegate object DataMapper(IDataRecord record);
 
@@ -131,8 +131,8 @@
         static MemberInfo GetEntityField(Type entityType, string columnName)
         {
             var members = new List<MemberInfo>();
-            members.AddRange(entityType.GetProperties(FLAGS_ALLINST));
-            members.AddRange(entityType.GetFields(FLAGS_ALLINST));
+            members.AddRange(entityType.GetProperties(FLAGS_PUBINST));
+            members.AddRange(entityType.GetFields(FLAGS_PUBINST));
 
             foreach (var member in members)
             {
