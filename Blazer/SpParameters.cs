@@ -79,7 +79,7 @@
             return spParam;
         }
 
-        internal IReadOnlyCollection<SpParameter> Parameters
+        internal IEnumerable<SpParameter> Parameters
         {
             get { return m_params.Values; }
         }
