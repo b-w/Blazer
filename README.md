@@ -1,6 +1,10 @@
 # Blazer
 
-Blazer is a tiny, high-performance object mapper that serves as an extension to ADO.NET. Its API consists of a couple of useful extension methods on `System.Data`'s provider-agnostic `IDbConnection` interface. These take care of a lot of the boilerplate code that's normally involved when using ADO.NET directly.
+Blazer is a tiny, high-performance object mapper that serves as an extension to ADO.NET.
+
+You can get it on [NuGet](https://www.nuget.org/packages/Blazer/).
+
+Blazer's API consists of a couple of useful extension methods on `System.Data`'s provider-agnostic `IDbConnection` interface. These take care of a lot of the boilerplate code that's normally involved when using ADO.NET directly.
 
 So, instead of doing stuff like this:
 
@@ -57,7 +61,7 @@ Blazer's primary features are:
 
 1. **Speed**. Blazer's performance is on level with that of hand-crafted ADO.NET. (also see *Performance* section)
 2. **Simplicity**. Blazer has a minimal API and does exactly what you would expect. Nothing more, nothing less. (also see *API Functions* section)
-3. **Lightweight**. One 32KB assembly. One namespace. No external dependencies.
+3. **Lightweight**. One assembly. One namespace. No external dependencies.
 4. **Provider-agnostic**. There is no separate code for SQL Server, SQLite, MySql, etc... As long as there is an ADO.NET provider for it, Blazer just works.
 5. **Configuration-less**. Blazer requires zero configuration and does not depend on any pre-generated code or models.
 
@@ -76,7 +80,7 @@ And while it's not a fully-fledged Object *Relational* Mapper, Blazer does perfo
 
 ## Quickstart
 
-1. Reference `Blazer.dll`.
+1. Reference `Blazer.dll` (get it on [NuGet](https://www.nuget.org/packages/Blazer/)).
 2. Import the `Blazer` namespace.
 3. Open an `IDbConnection`.
 4. Use the Blazer extension methods on `IDbConnection`.
@@ -490,6 +494,10 @@ Secondly, it looks for any member (again, public instance field or property) whe
 `StringComparison.OrdinalIgnoreCase` is used for all string matching.
 
 The first member found is matched to the result set column. Columns not matched to any member are simply ignored.
+
+## License
+
+See [LICENSE.txt](https://github.com/b-w/Blazer/blob/master/LICENSE.txt)
 
 ## Copyright
 
