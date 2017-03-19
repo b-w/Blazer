@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.Data;
-#if NETSTANDARD
+#if FEATURE_TYPE_INFO
     using System.Reflection;
 #endif
 
@@ -41,7 +41,7 @@
             {
                 type = nullableType;
             }
-#if NETSTANDARD
+#if FEATURE_TYPE_INFO
             if (type.GetTypeInfo().IsEnum && !m_typeMap.ContainsKey(type))
 #else
             if (type.IsEnum && !m_typeMap.ContainsKey(type))

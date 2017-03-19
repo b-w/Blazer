@@ -32,7 +32,7 @@
             {
                 type = nullableType;
             }
-#if NETSTANDARD
+#if FEATURE_TYPE_INFO
             if (type.GetTypeInfo().IsEnum && !m_getMethodMap.ContainsKey(type))
 #else
             if (type.IsEnum && !m_getMethodMap.ContainsKey(type))

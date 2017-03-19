@@ -42,14 +42,18 @@
                 return GetExpressionForKnownDbType(context, property, dbType);
             }
 
-#if NETSTANDARD
+#if FEATURE_TYPE_INFO
             var collectionInterfaceType = property.PropertyType.GetInterfaces().FirstOrDefault(x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 #else
             var collectionInterfaceType = property.PropertyType.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 #endif
             if (collectionInterfaceType != null)
             {
+#if FEATURE_GENERIC_TYPE_ARGS
                 var innerType = collectionInterfaceType.GenericTypeArguments[0];
+#else
+                var innerType = collectionInterfaceType.GetGenericArguments()[0];
+#endif
                 if (DbTypeStore.TryGetDbType(innerType, out dbType))
                 {
                     return GetExpressionForCollectionType(context, property, innerType, dbType);

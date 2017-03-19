@@ -1,4 +1,5 @@
-﻿namespace Blazer
+﻿#if FEATURE_ASYNC
+namespace Blazer
 {
     using System;
     using System.Collections.Generic;
@@ -188,3 +189,4 @@
         }
     }
 }
+#endif

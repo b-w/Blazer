@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+#if FEATURE_DATA_ANNOTATIONS
     using System.ComponentModel.DataAnnotations.Schema;
+#endif
     using System.Data;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -146,6 +148,7 @@
             members.AddRange(entityType.GetProperties(FLAGS_PUBINST));
             members.AddRange(entityType.GetFields(FLAGS_PUBINST));
 
+#if FEATURE_DATA_ANNOTATIONS
             foreach (var member in members)
             {
                 var columnAttr = member.GetCustomAttribute<ColumnAttribute>();
@@ -154,6 +157,7 @@
                     return member;
                 }
             }
+#endif
 
             foreach (var member in members)
             {
@@ -188,7 +192,7 @@
             Expression entitySetFieldExpr = Expression.Assign(
                 context.EntityFieldExpr,
                 readExpr);
-#if NETSTANDARD
+#if FEATURE_TYPE_INFO
             if (Nullable.GetUnderlyingType(context.EntityFieldType) != null || !context.EntityFieldType.GetTypeInfo().IsValueType)
 #else
             if (Nullable.GetUnderlyingType(context.EntityFieldType) != null || !context.EntityFieldType.IsValueType)
@@ -215,7 +219,7 @@
             if (DataRecordMap.TryGetGetMethod(context.EntityFieldType, out method))
             {
                 Expression callReaderExpr = Expression.Call(context.DataRecordParameterExpr, method, Expression.Constant(context.FieldIndex));
-#if NETSTANDARD
+#if FEATURE_TYPE_INFO
                 if (context.EntityFieldType.GetTypeInfo().IsEnum || Nullable.GetUnderlyingType(context.EntityFieldType) != null)
 #else
                 if (context.EntityFieldType.IsEnum || Nullable.GetUnderlyingType(context.EntityFieldType) != null)
