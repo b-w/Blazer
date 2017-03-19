@@ -32,7 +32,11 @@
             {
                 type = nullableType;
             }
+#if NETSTANDARD
+            if (type.GetTypeInfo().IsEnum && !m_getMethodMap.ContainsKey(type))
+#else
             if (type.IsEnum && !m_getMethodMap.ContainsKey(type))
+#endif
             {
                 type = Enum.GetUnderlyingType(type);
             }

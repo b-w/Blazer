@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Concurrent;
+
     using Blazer.DataTypeMappers;
 
     internal static class DataTypeMapperStore

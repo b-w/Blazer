@@ -6,6 +6,7 @@
     using System.Data;
     using System.Linq.Expressions;
     using System.Reflection;
+
     using Blazer.Caching;
     using Blazer.Dynamic;
 
@@ -187,8 +188,11 @@
             Expression entitySetFieldExpr = Expression.Assign(
                 context.EntityFieldExpr,
                 readExpr);
-
+#if NETSTANDARD
+            if (Nullable.GetUnderlyingType(context.EntityFieldType) != null || !context.EntityFieldType.GetTypeInfo().IsValueType)
+#else
             if (Nullable.GetUnderlyingType(context.EntityFieldType) != null || !context.EntityFieldType.IsValueType)
+#endif
             {
                 // if (!record.IsDbNull(i))
                 // {
@@ -211,7 +215,11 @@
             if (DataRecordMap.TryGetGetMethod(context.EntityFieldType, out method))
             {
                 Expression callReaderExpr = Expression.Call(context.DataRecordParameterExpr, method, Expression.Constant(context.FieldIndex));
+#if NETSTANDARD
+                if (context.EntityFieldType.GetTypeInfo().IsEnum || Nullable.GetUnderlyingType(context.EntityFieldType) != null)
+#else
                 if (context.EntityFieldType.IsEnum || Nullable.GetUnderlyingType(context.EntityFieldType) != null)
+#endif
                 {
                     callReaderExpr = Expression.Convert(callReaderExpr, context.EntityFieldType);
                 }

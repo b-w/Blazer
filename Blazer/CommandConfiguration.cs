@@ -5,69 +5,21 @@
 
     public class DefaultCommandConfiguration
     {
-        readonly ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-        int? m_timeout;
-        CommandType? m_commandType;
-
         internal DefaultCommandConfiguration()
         {
         }
 
-        public int? Timeout
-        {
-            get
-            {
-                return m_timeout;
-            }
-            set
-            {
-                m_lock.EnterWriteLock();
-                try
-                {
-                    m_timeout = value;
-                }
-                finally
-                {
-                    m_lock.ExitWriteLock();
-                }
-            }
-        }
+        public int? Timeout { get; set; }
 
-        public CommandType? CommandType
-        {
-            get
-            {
-                return m_commandType;
-            }
-            set
-            {
-                m_lock.EnterWriteLock();
-                try
-                {
-                    m_commandType = value;
-                }
-                finally
-                {
-                    m_lock.ExitWriteLock();
-                }
-            }
-        }
+        public CommandType? CommandType { get; set; }
 
         internal DefaultCommandConfiguration Copy()
         {
-            m_lock.EnterReadLock();
-            try
+            return new DefaultCommandConfiguration()
             {
-                return new DefaultCommandConfiguration()
-                {
-                    m_timeout = this.m_timeout,
-                    m_commandType = this.m_commandType
-                };
-            }
-            finally
-            {
-                m_lock.ExitReadLock();
-            }
+                Timeout = this.Timeout,
+                CommandType = this.CommandType
+            };
         }
     }
 

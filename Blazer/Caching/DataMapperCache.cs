@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
+
     using static DataMapperFactory;
 
     internal static class DataMapperCache

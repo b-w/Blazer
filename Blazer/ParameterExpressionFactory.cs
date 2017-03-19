@@ -42,7 +42,11 @@
                 return GetExpressionForKnownDbType(context, property, dbType);
             }
 
+#if NETSTANDARD
+            var collectionInterfaceType = property.PropertyType.GetInterfaces().FirstOrDefault(x => x.GetTypeInfo().IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+#else
             var collectionInterfaceType = property.PropertyType.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+#endif
             if (collectionInterfaceType != null)
             {
                 var innerType = collectionInterfaceType.GenericTypeArguments[0];

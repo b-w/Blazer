@@ -4,6 +4,9 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+#if NETSTANDARD
+    using System.Reflection;
+#endif
 
     internal static class ExpressionHelper
     {

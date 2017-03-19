@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Concurrent;
+
     using static ParameterFactory;
 
     internal static class ParameterFactoryCache

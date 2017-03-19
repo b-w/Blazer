@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
+    <id>Blazer</id>
+    <version>0.1.1</version>
+    <title>Blazer</title>
+    <authors>Bart Wolff</authors>
     <owners>b-w</owners>
     <licenseUrl>https://github.com/b-w/Blazer/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/b-w/Blazer</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>$description$</description>
-    <copyright>$copyright$</copyright>
+    <description>High-performance ADO.NET object mapper.</description>
+    <copyright>Copyright (c) 2016 Bart Wolff</copyright>
     <tags>SQL ADO.NET data-access ORM micro-ORM object-mapper</tags>
   </metadata>
+  <files>
+    <file src="bin\Release\**" target="lib" />
+  </files>
 </package>

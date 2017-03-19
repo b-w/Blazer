@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Concurrent;
     using System.Data;
+#if NETSTANDARD
+    using System.Reflection;
+#endif
 
     internal static class DbTypeStore
     {
@@ -38,7 +41,11 @@
             {
                 type = nullableType;
             }
+#if NETSTANDARD
+            if (type.GetTypeInfo().IsEnum && !m_typeMap.ContainsKey(type))
+#else
             if (type.IsEnum && !m_typeMap.ContainsKey(type))
+#endif
             {
                 type = Enum.GetUnderlyingType(type);
             }

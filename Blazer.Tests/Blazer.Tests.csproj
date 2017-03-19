@@ -64,9 +64,9 @@
     <Compile Include="AsyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blazer\Blazer.csproj">
+    <ProjectReference Include="..\Blazer\Blazer.Net45.csproj">
       <Project>{64756601-d702-4eb8-84f4-3037d57ee81b}</Project>
-      <Name>Blazer</Name>
+      <Name>Blazer.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
