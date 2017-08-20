@@ -114,5 +114,27 @@
             Assert.AreEqual(4, products[3].ProductID);
             Assert.AreEqual("Headset Ball Bearings", products[3].Name);
         }
+
+        [TestMethod]
+        public void Query_Formattable_String()
+        {
+            // arrange
+            AWProduct product;
+
+            // act
+            using (var conn = TestResources.GetAdventureWorksConnection())
+            {
+                conn.Open();
+                product = conn.QuerySingle<AWProduct>($"SELECT * FROM [Production].[Product] WHERE [ProductID] = {328}");
+                conn.Close();
+            }
+
+            // assert
+            Assert.IsNotNull(product);
+            Assert.AreEqual(328, product.ProductID);
+            Assert.AreEqual("Mountain End Caps", product.Name);
+            Assert.AreEqual(new DateTime(2008, 4, 30), product.SellStartDate);
+            Assert.IsNull(product.SellEndDate);
+        }
     }
 }

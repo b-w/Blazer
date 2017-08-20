@@ -64,13 +64,13 @@
     <Compile Include="AsyncTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blazer\Blazer.Net45.csproj">
-      <Project>{64756601-d702-4eb8-84f4-3037d57ee81b}</Project>
-      <Name>Blazer.Net45</Name>
-    </ProjectReference>
+    <Content Include="CreateTestSp.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CreateTestSp.sql" />
+    <ProjectReference Include="..\Blazer\Blazer.csproj">
+      <Project>{7c527f36-17fd-46f8-82dd-f52542d8d9fd}</Project>
+      <Name>Blazer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -1,5 +1,9 @@
 ﻿namespace Blazer
 {
+#if FEATURE_FORMATTABLE_STRING
+    using System;
+    using System.Linq;
+#endif
     using System.Collections;
     using System.Collections.Generic;
     using System.Data;
@@ -19,6 +23,36 @@
             var factory = GetFactory(parameters);
             factory(command, parameters);
         }
+
+#if FEATURE_FORMATTABLE_STRING
+        public static void AddParameters(IDbCommand command, FormattableString commandString)
+        {
+            // TODO: optimize this
+
+            var paramNames = Enumerable.Range(0, commandString.ArgumentCount)
+                                .Select(x => $"@p__blazer__{x}")
+                                .ToArray();
+            var paramValues = commandString.GetArguments();
+
+            command.CommandText = string.Format(commandString.Format, paramNames);
+
+            for (int i = 0; i < paramValues.Length; i++)
+            {
+                var dbParam = command.CreateParameter();
+                dbParam.Direction = ParameterDirection.Input;
+
+                if (DbTypeStore.TryGetDbType(paramValues[i].GetType(), out var dbType))
+                {
+                    dbParam.DbType = dbType;
+                }
+
+                dbParam.ParameterName = paramNames[i];
+                dbParam.Value = paramValues[i];
+
+                command.Parameters.Add(dbParam);
+            }
+        }
+#endif
 
         static ParameterFactoryFunc GetFactory(object parameters)
         {

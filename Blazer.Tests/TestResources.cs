@@ -5,7 +5,7 @@
 
     internal static class TestResources
     {
-        public const string CONN_ADVWORKS = @"Server=.\LOCALSQL;Database=AdventureWorks;Integrated Security=True";
+        public const string CONN_ADVWORKS = @"Server=.\SQLEXPRESS;Database=AdventureWorks;Integrated Security=True";
 
         public static IDbConnection GetAdventureWorksConnection()
         {

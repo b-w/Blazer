@@ -8,10 +8,17 @@
     {
         const CommandBehavior s_defaultCommandBehavior = CommandBehavior.SequentialAccess | CommandBehavior.SingleResult;
 
+#if FEATURE_FORMATTABLE_STRING
+        public static T Scalar<T>(this IDbConnection connection, NonFormattableString command, object parameters = null, CommandConfiguration config = null)
+        {
+            using (var cmd = CommandFactory.CreateCommand(connection, command.Value, config))
+            {
+#else
         public static T Scalar<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
             using (var cmd = CommandFactory.CreateCommand(connection, command, config))
             {
+#endif
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
@@ -26,10 +33,17 @@
             }
         }
 
+#if FEATURE_FORMATTABLE_STRING
+        public static int Command(this IDbConnection connection, NonFormattableString command, object parameters = null, CommandConfiguration config = null)
+        {
+            using (var cmd = CommandFactory.CreateCommand(connection, command.Value, config))
+            {
+#else
         public static int Command(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
             using (var cmd = CommandFactory.CreateCommand(connection, command, config))
             {
+#endif
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
@@ -39,10 +53,17 @@
             }
         }
 
+#if FEATURE_FORMATTABLE_STRING
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, NonFormattableString command, object parameters = null, CommandConfiguration config = null) where T : new()
+        {
+            using (var cmd = CommandFactory.CreateCommand(connection, command.Value, config))
+            {
+#else
         public static IEnumerable<T> Query<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
             using (var cmd = CommandFactory.CreateCommand(connection, command, config))
             {
+#endif
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
@@ -59,10 +80,17 @@
             }
         }
 
+#if FEATURE_FORMATTABLE_STRING
+        public static T QuerySingle<T>(this IDbConnection connection, NonFormattableString command, object parameters = null, CommandConfiguration config = null) where T : new()
+        {
+            using (var cmd = CommandFactory.CreateCommand(connection, command.Value, config))
+            {
+#else
         public static T QuerySingle<T>(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null) where T : new()
         {
             using (var cmd = CommandFactory.CreateCommand(connection, command, config))
             {
+#endif
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
@@ -80,10 +108,17 @@
             }
         }
 
+#if FEATURE_FORMATTABLE_STRING
+        public static IEnumerable<dynamic> Query(this IDbConnection connection, NonFormattableString command, object parameters = null, CommandConfiguration config = null)
+        {
+            using (var cmd = CommandFactory.CreateCommand(connection, command.Value, config))
+            {
+#else
         public static IEnumerable<dynamic> Query(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
             using (var cmd = CommandFactory.CreateCommand(connection, command, config))
             {
+#endif
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);
@@ -100,10 +135,17 @@
             }
         }
 
+#if FEATURE_FORMATTABLE_STRING
+        public static dynamic QuerySingle(this IDbConnection connection, NonFormattableString command, object parameters = null, CommandConfiguration config = null)
+        {
+            using (var cmd = CommandFactory.CreateCommand(connection, command.Value, config))
+            {
+#else
         public static dynamic QuerySingle(this IDbConnection connection, string command, object parameters = null, CommandConfiguration config = null)
         {
             using (var cmd = CommandFactory.CreateCommand(connection, command, config))
             {
+#endif
                 if (parameters != null)
                 {
                     ParameterFactory.AddParameters(cmd, parameters);

@@ -23,11 +23,15 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
-    <DefineConstants>NETSTANDARD;FEATURE_ASYNC;FEATURE_DATA_ANNOTATIONS;FEATURE_GENERIC_TYPE_ARGS;FEATURE_TYPE_INFO</DefineConstants>
+    <DefineConstants>NETSTANDARD;FEATURE_ASYNC;FEATURE_DATA_ANNOTATIONS;FEATURE_GENERIC_TYPE_ARGS;FEATURE_TYPE_INFO;FEATURE_FORMATTABLE_STRING</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='net45' OR '$(TargetFramework)'=='net46'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
     <DefineConstants>FEATURE_ASYNC;FEATURE_DATA_ANNOTATIONS;FEATURE_GENERIC_TYPE_ARGS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net46'">
+    <DefineConstants>FEATURE_ASYNC;FEATURE_DATA_ANNOTATIONS;FEATURE_GENERIC_TYPE_ARGS;FEATURE_FORMATTABLE_STRING</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
