@@ -16,7 +16,7 @@
             MethodInfo dataRecordIsDbNullMethod,
             int fieldIndex)
         {
-            var getBytesMethod = typeof(IDataRecord).GetMethod("GetBytes", new[] { typeof(int), typeof(long), typeof(byte[]), typeof(int), typeof(int) });
+            var getBytesMethod = typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBytes), new[] { typeof(int), typeof(long), typeof(byte[]), typeof(int), typeof(int) });
 
             // int length;
             var lengthVarExpr = Expression.Variable(typeof(int), "length");
@@ -60,15 +60,13 @@
             // {
             //      ...
             // }
-            var ifNullExpr = Expression.IfThen(
+            return Expression.IfThen(
                 Expression.Not(
                     Expression.Call(
                         dataRecordParameterExpr,
                         dataRecordIsDbNullMethod,
                         Expression.Constant(fieldIndex))),
                 readArrayBlockExpr);
-
-            return ifNullExpr;
         }
     }
 }

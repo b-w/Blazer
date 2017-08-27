@@ -121,7 +121,7 @@
                 nameExpr,
                 valueExpr,
                 addParamExpr
-                );
+            );
         }
 
         private static Expression GetExpressionForCollectionType(Context context, ParameterValue value, Type collectionType, DbType dbType)
@@ -129,12 +129,12 @@
             var propertyVariableName = value.Name;
 
             var sbType = typeof(StringBuilder);
-            var sbAppendStringMethod = sbType.GetMethod("Append", new[] { typeof(string) });
-            var sbAppendIntMethod = sbType.GetMethod("Append", new[] { typeof(int) });
-            var sbToStringMethod = sbType.GetMethod("ToString", new Type[] { });
-            var stringConcatMethod = typeof(string).GetMethod("Concat", new[] { typeof(object), typeof(object) });
-            var rxEscapeMethod = typeof(Regex).GetMethod("Escape", new[] { typeof(string) });
-            var rxReplaceMethod = typeof(Regex).GetMethod("Replace", new[] { typeof(string), typeof(string), typeof(string) });
+            var sbAppendStringMethod = sbType.GetMethod(nameof(StringBuilder.Append), new[] { typeof(string) });
+            var sbAppendIntMethod = sbType.GetMethod(nameof(StringBuilder.Append), new[] { typeof(int) });
+            var sbToStringMethod = sbType.GetMethod(nameof(StringBuilder.ToString), new Type[] { });
+            var stringConcatMethod = typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(object), typeof(object) });
+            var rxEscapeMethod = typeof(Regex).GetMethod(nameof(Regex.Escape), new[] { typeof(string) });
+            var rxReplaceMethod = typeof(Regex).GetMethod(nameof(Regex.Replace), new[] { typeof(string), typeof(string), typeof(string) });
 
             // StringBuilder sb;
             var sbVarExpr = Expression.Variable(sbType);
@@ -241,7 +241,7 @@
                     valueExpr,
                     addParamExpr,
                     iIncrementExpr
-                    ));
+                ));
 
             // sb.Append(")");
             var sbCloseBracketExpr = Expression.Call(
@@ -284,7 +284,8 @@
                 loopExpr,
                 sbCloseBracketExpr,
                 rxAssignExpr,
-                cmdTextAssignExpr);
+                cmdTextAssignExpr
+            );
         }
 #endif
 
@@ -319,7 +320,7 @@
             throw new NotSupportedException($"Parameter of type {property.PropertyType} is not supported.");
         }
 
-        static Expression GetExpressionForKnownDbType(Context context, PropertyInfo property, DbType dbType)
+        private static Expression GetExpressionForKnownDbType(Context context, PropertyInfo property, DbType dbType)
         {
             // IDbDataParameter dataParam;
             var dbParamVarExpr = Expression.Variable(typeof(IDbDataParameter));
@@ -357,7 +358,7 @@
                 context.CommandParametersAddMethod,
                 dbParamVarExpr);
 
-            var blockExpr = Expression.Block(
+            return Expression.Block(
                 new[] { dbParamVarExpr },
                 createParamExpr,
                 directionExpr,
@@ -365,9 +366,7 @@
                 nameExpr,
                 valueExpr,
                 addParamExpr
-                );
-
-            return blockExpr;
+            );
         }
 
         static Expression GetExpressionForCollectionType(Context context, PropertyInfo property, Type collectionType, DbType dbType)
@@ -375,12 +374,12 @@
             var propertyVariableName = "@" + property.Name;
 
             var sbType = typeof(StringBuilder);
-            var sbAppendStringMethod = sbType.GetMethod("Append", new[] { typeof(string) });
-            var sbAppendIntMethod = sbType.GetMethod("Append", new[] { typeof(int) });
-            var sbToStringMethod = sbType.GetMethod("ToString", new Type[] { });
-            var stringConcatMethod = typeof(string).GetMethod("Concat", new[] { typeof(object), typeof(object) });
-            var rxEscapeMethod = typeof(Regex).GetMethod("Escape", new[] { typeof(string) });
-            var rxReplaceMethod = typeof(Regex).GetMethod("Replace", new[] { typeof(string), typeof(string), typeof(string) });
+            var sbAppendStringMethod = sbType.GetMethod(nameof(StringBuilder.Append), new[] { typeof(string) });
+            var sbAppendIntMethod = sbType.GetMethod(nameof(StringBuilder.Append), new[] { typeof(int) });
+            var sbToStringMethod = sbType.GetMethod(nameof(StringBuilder.ToString), new Type[] { });
+            var stringConcatMethod = typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(object), typeof(object) });
+            var rxEscapeMethod = typeof(Regex).GetMethod(nameof(Regex.Escape), new[] { typeof(string) });
+            var rxReplaceMethod = typeof(Regex).GetMethod(nameof(Regex.Replace), new[] { typeof(string), typeof(string), typeof(string) });
 
             // StringBuilder sb;
             var sbVarExpr = Expression.Variable(sbType);
@@ -487,7 +486,7 @@
                     valueExpr,
                     addParamExpr,
                     iIncrementExpr
-                    ));
+                ));
 
             // sb.Append(")");
             var sbCloseBracketExpr = Expression.Call(
@@ -522,7 +521,7 @@
                         sbVarExpr,
                         sbToStringMethod)));
 
-            var blockExpr = Expression.Block(
+            return Expression.Block(
                 new[] { sbVarExpr, iVarExpr, loopVarExpr, rxVarExpr },
                 sbNewExpr,
                 sbOpenBracketExpr,
@@ -530,9 +529,8 @@
                 loopExpr,
                 sbCloseBracketExpr,
                 rxAssignExpr,
-                cmdTextAssignExpr);
-
-            return blockExpr;
+                cmdTextAssignExpr
+            );
         }
     }
 }

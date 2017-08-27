@@ -21,25 +21,29 @@
 
         public void ApplyTo(IDbDataParameter dbParameter)
         {
-            dbParameter.Direction = this.Direction;
-            dbParameter.DbType = this.DbType;
-            dbParameter.ParameterName = this.Name;
+            dbParameter.Direction = Direction;
+            dbParameter.DbType = DbType;
+            dbParameter.ParameterName = Name;
+
             if (dbParameter.Direction == ParameterDirection.Input
                 || dbParameter.Direction == ParameterDirection.InputOutput)
             {
-                dbParameter.Value = this.Value ?? DBNull.Value;
+                dbParameter.Value = Value ?? DBNull.Value;
             }
-            if (this.Size.HasValue)
+
+            if (Size.HasValue)
             {
-                dbParameter.Size = this.Size.Value;
+                dbParameter.Size = Size.Value;
             }
-            if (this.Precision.HasValue)
+
+            if (Precision.HasValue)
             {
-                dbParameter.Precision = this.Precision.Value;
+                dbParameter.Precision = Precision.Value;
             }
-            if (this.Scale.HasValue)
+
+            if (Scale.HasValue)
             {
-                dbParameter.Scale = this.Scale.Value;
+                dbParameter.Scale = Scale.Value;
             }
         }
     }

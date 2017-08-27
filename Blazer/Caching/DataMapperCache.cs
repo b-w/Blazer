@@ -11,12 +11,12 @@
     {
         public sealed class Key : IEquatable<Key>
         {
-            readonly IEqualityComparer<string> m_stringComparer;
-            readonly int m_hashCode;
+            private readonly IEqualityComparer<string> m_stringComparer;
+            private readonly int m_hashCode;
 
-            readonly string m_connectionString;
-            readonly string m_command;
-            readonly Type m_returnType;
+            private readonly string m_connectionString;
+            private readonly string m_command;
+            private readonly Type m_returnType;
 
             public Key(IDbCommand command, Type returnType)
             {
@@ -54,22 +54,16 @@
                     return false;
                 }
 
-                return this.m_returnType.Equals(other.m_returnType)
-                    && this.m_stringComparer.Equals(this.m_command, other.m_command)
-                    && this.m_stringComparer.Equals(this.m_connectionString, other.m_connectionString);
+                return m_returnType.Equals(other.m_returnType)
+                    && m_stringComparer.Equals(m_command, other.m_command)
+                    && m_stringComparer.Equals(m_connectionString, other.m_connectionString);
             }
         }
 
-        static readonly ConcurrentDictionary<Key, DataMapper> m_mapperCache = new ConcurrentDictionary<Key, DataMapper>();
+        private static readonly ConcurrentDictionary<Key, DataMapper> m_mapperCache = new ConcurrentDictionary<Key, DataMapper>();
 
-        public static bool TryGet(Key key, out DataMapper mapper)
-        {
-            return m_mapperCache.TryGetValue(key, out mapper);
-        }
+        public static bool TryGet(Key key, out DataMapper mapper) => m_mapperCache.TryGetValue(key, out mapper);
 
-        public static void Add(Key key, DataMapper value)
-        {
-            m_mapperCache.AddOrUpdate(key, value, (k, old) => value);
-        }
+        public static void Add(Key key, DataMapper value) => m_mapperCache.AddOrUpdate(key, value, (k, old) => value);
     }
 }

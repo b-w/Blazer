@@ -26,121 +26,51 @@
             return value;
         }
 
-        public object Get(string key)
-        {
-            return m_values[key];
-        }
+        public object Get(string key) => m_values[key];
 
         #region IDynamicMetaObjectProvider
 
-        public DynamicMetaObject GetMetaObject(Expression parameter)
-        {
-            return new BlazerDynamicMetaObject(parameter, this);
-        }
+        public DynamicMetaObject GetMetaObject(Expression parameter) => new BlazerDynamicMetaObject(parameter, this);
 
         #endregion
 
         #region IDictionary<string, object>
 
-        public ICollection<string> Keys
-        {
-            get
-            {
-                return m_values.Keys;
-            }
-        }
+        public ICollection<string> Keys => m_values.Keys;
 
-        public ICollection<object> Values
-        {
-            get
-            {
-                return m_values.Values;
-            }
-        }
+        public ICollection<object> Values => m_values.Values;
 
-        public int Count
-        {
-            get
-            {
-                return m_values.Count;
-            }
-        }
+        public int Count => m_values.Count;
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                return m_values.IsReadOnly;
-            }
-        }
+        public bool IsReadOnly => m_values.IsReadOnly;
 
         public object this[string key]
         {
-            get
-            {
-                return m_values[key];
-            }
-
-            set
-            {
-                m_values[key] = value;
-            }
+            get => m_values[key];
+            set => m_values[key] = value;
         }
 
-        public bool ContainsKey(string key)
-        {
-            return m_values.ContainsKey(key);
-        }
+        public bool ContainsKey(string key) => m_values.ContainsKey(key);
 
-        public void Add(string key, object value)
-        {
-            m_values.Add(key, value);
-        }
+        public void Add(string key, object value) => m_values.Add(key, value);
 
-        public bool Remove(string key)
-        {
-            return m_values.Remove(key);
-        }
+        public bool Remove(string key) => m_values.Remove(key);
 
-        public bool TryGetValue(string key, out object value)
-        {
-            return m_values.TryGetValue(key, out value);
-        }
+        public bool TryGetValue(string key, out object value) => m_values.TryGetValue(key, out value);
 
-        public void Add(KeyValuePair<string, object> item)
-        {
-            m_values.Add(item);
-        }
+        public void Add(KeyValuePair<string, object> item) => m_values.Add(item);
 
-        public void Clear()
-        {
-            m_values.Clear();
-        }
+        public void Clear() => m_values.Clear();
 
-        public bool Contains(KeyValuePair<string, object> item)
-        {
-            return m_values.Contains(item);
-        }
+        public bool Contains(KeyValuePair<string, object> item) => m_values.Contains(item);
 
-        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
-        {
-            m_values.CopyTo(array, arrayIndex);
-        }
+        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) => m_values.CopyTo(array, arrayIndex);
 
-        public bool Remove(KeyValuePair<string, object> item)
-        {
-            return m_values.Remove(item);
-        }
+        public bool Remove(KeyValuePair<string, object> item) => m_values.Remove(item);
 
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-        {
-            return m_values.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => m_values.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return m_values.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => m_values.GetEnumerator();
 
         #endregion
     }

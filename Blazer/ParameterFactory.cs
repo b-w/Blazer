@@ -14,7 +14,7 @@
 
     internal static class ParameterFactory
     {
-        const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
+        private const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
 
         internal delegate void ParameterFactoryFunc(IDbCommand command, object parameters);
 
@@ -95,12 +95,11 @@
         }
 #endif
 
-        static ParameterFactoryFunc GetFactory(object parameters)
+        private static ParameterFactoryFunc GetFactory(object parameters)
         {
             var parametersType = parameters.GetType();
 
-            ParameterFactoryFunc cachedFactory;
-            if (ParameterFactoryCache.TryGet(parametersType, out cachedFactory))
+            if (ParameterFactoryCache.TryGet(parametersType, out ParameterFactoryFunc cachedFactory))
             {
                 return cachedFactory;
             }
@@ -122,6 +121,7 @@
             {
                 factoryBodyExpressions.Add(ParameterExpressionFactory.GetExpression(context, property));
             }
+
             var lambdaBlockExpr = Expression.Block(
                 new[] { typedParamsVarExpr },
                 factoryBodyExpressions);
@@ -136,19 +136,19 @@
         private static ParameterExpressionFactory.Context GetContext()
         {
             var commandType = typeof(IDbCommand);
-            var commandCreateParamMethod = commandType.GetMethod("CreateParameter", FLAGS_PUBINST);
-            var commandCommandTextProperty = commandType.GetProperty("CommandText", FLAGS_PUBINST);
+            var commandCreateParamMethod = commandType.GetMethod(nameof(IDbCommand.CreateParameter), FLAGS_PUBINST);
+            var commandCommandTextProperty = commandType.GetProperty(nameof(IDbCommand.CommandText), FLAGS_PUBINST);
             var commandParamExpr = Expression.Parameter(commandType, "command");
 
             var commandParamsType = typeof(IList);
-            var commandParamsProperty = commandType.GetProperty("Parameters", FLAGS_PUBINST);
-            var commandParamsAddMethod = commandParamsType.GetMethod("Add", FLAGS_PUBINST);
+            var commandParamsProperty = commandType.GetProperty(nameof(IDbCommand.Parameters), FLAGS_PUBINST);
+            var commandParamsAddMethod = commandParamsType.GetMethod(nameof(IList.Add), FLAGS_PUBINST);
 
             var paramType = typeof(IDataParameter);
-            var paramDbTypeProperty = paramType.GetProperty("DbType", FLAGS_PUBINST);
-            var paramDirectionProperty = paramType.GetProperty("Direction", FLAGS_PUBINST);
-            var paramNameProperty = paramType.GetProperty("ParameterName", FLAGS_PUBINST);
-            var paramValueProperty = paramType.GetProperty("Value", FLAGS_PUBINST);
+            var paramDbTypeProperty = paramType.GetProperty(nameof(IDataParameter.DbType), FLAGS_PUBINST);
+            var paramDirectionProperty = paramType.GetProperty(nameof(IDataParameter.Direction), FLAGS_PUBINST);
+            var paramNameProperty = paramType.GetProperty(nameof(IDataParameter.ParameterName), FLAGS_PUBINST);
+            var paramValueProperty = paramType.GetProperty(nameof(IDataParameter.Value), FLAGS_PUBINST);
 
             return new ParameterExpressionFactory.Context()
             {

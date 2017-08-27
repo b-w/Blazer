@@ -14,24 +14,28 @@
 
     internal static class DataMapperFactory
     {
-        class Context
+        private class Context
         {
             public Type EntityFieldType { get; set; }
+
             public Expression EntityFieldExpr { get; set; }
+
             public ParameterExpression DataRecordParameterExpr { get; set; }
+
             public MethodInfo DataRecordIsDbNullMethod { get; set; }
+
             public int FieldIndex { get; set; }
         }
 
-        const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
+        private const BindingFlags FLAGS_PUBINST = BindingFlags.Instance | BindingFlags.Public;
 
         public delegate object DataMapper(IDataRecord record);
 
         public static DataMapper GetMapper(IDbCommand command, IDataReader reader)
         {
             var cacheKey = new DataMapperCache.Key(command, typeof(BlazerDynamicObject));
-            DataMapper cachedMapper;
-            if (DataMapperCache.TryGet(cacheKey, out cachedMapper))
+
+            if (DataMapperCache.TryGet(cacheKey, out DataMapper cachedMapper))
             {
                 return cachedMapper;
             }
@@ -46,12 +50,15 @@
             {
                 var values = new object[record.FieldCount];
                 var blzDynamic = new BlazerDynamicObject(values.Length);
+
                 record.GetValues(values);
+
                 for (int i = 0; i < values.Length; i++)
                 {
                     var value = values[i];
-                    blzDynamic.Set(columns[i], (value == DBNull.Value ? null : value));
+                    blzDynamic.Set(columns[i], value == DBNull.Value ? null : value);
                 }
+
                 return blzDynamic;
             };
 
@@ -63,17 +70,16 @@
         public static DataMapper GetMapper<T>(IDbCommand command, IDataReader reader) where T : new()
         {
             var entityType = typeof(T);
-
             var cacheKey = new DataMapperCache.Key(command, entityType);
-            DataMapper cachedMapper;
-            if (DataMapperCache.TryGet(cacheKey, out cachedMapper))
+
+            if (DataMapperCache.TryGet(cacheKey, out DataMapper cachedMapper))
             {
                 return cachedMapper;
             }
 
             var dataRecordType = typeof(IDataRecord);
             var dataRecordParamExpr = Expression.Parameter(dataRecordType, "record");
-            var dataRecordIsDbNullMethod = dataRecordType.GetMethod("IsDBNull", new[] { typeof(int) });
+            var dataRecordIsDbNullMethod = dataRecordType.GetMethod(nameof(IDataRecord.IsDBNull), new[] { typeof(int) });
 
             var mapperBodyExpressions = new List<Expression>();
             var returnLabelExpr = Expression.Label(entityType);
@@ -98,15 +104,13 @@
                 Type entityFieldType = null;
                 Expression entityFieldExpr = null;
 
-                if (entityField is PropertyInfo)
+                if (entityField is PropertyInfo propInfo)
                 {
-                    var propInfo = (PropertyInfo)entityField;
                     entityFieldType = propInfo.PropertyType;
                     entityFieldExpr = Expression.Property(entityVarExpr, propInfo);
                 }
-                else if (entityField is FieldInfo)
+                else if (entityField is FieldInfo fieldInfo)
                 {
-                    var fieldInfo = (FieldInfo)entityField;
                     entityFieldType = fieldInfo.FieldType;
                     entityFieldExpr = Expression.Field(entityVarExpr, fieldInfo);
                 }
@@ -142,7 +146,7 @@
             return lambda;
         }
 
-        static MemberInfo GetEntityField(Type entityType, string columnName)
+        private static MemberInfo GetEntityField(Type entityType, string columnName)
         {
             var members = new List<MemberInfo>();
             members.AddRange(entityType.GetProperties(FLAGS_PUBINST));
@@ -170,10 +174,9 @@
             return null;
         }
 
-        static Expression GetFieldMapperExpression(Context context)
+        private static Expression GetFieldMapperExpression(Context context)
         {
-            IDataTypeMapper mapper;
-            if (DataTypeMapperStore.TryGetMapper(context.EntityFieldType, out mapper))
+            if (DataTypeMapperStore.TryGetMapper(context.EntityFieldType, out IDataTypeMapper mapper))
             {
                 return mapper.GetReaderExpression(
                     context.EntityFieldExpr,
@@ -181,10 +184,11 @@
                     context.DataRecordIsDbNullMethod,
                     context.FieldIndex);
             }
+
             return GetValueTypeFieldMapperExpression(context);
         }
 
-        static Expression GetValueTypeFieldMapperExpression(Context context)
+        private static Expression GetValueTypeFieldMapperExpression(Context context)
         {
             var readExpr = GetValueTypeReaderExpression(context);
 
@@ -213,10 +217,9 @@
             return entitySetFieldExpr;
         }
 
-        static Expression GetValueTypeReaderExpression(Context context)
+        private static Expression GetValueTypeReaderExpression(Context context)
         {
-            MethodInfo method;
-            if (DataRecordMap.TryGetGetMethod(context.EntityFieldType, out method))
+            if (DataRecordMap.TryGetGetMethod(context.EntityFieldType, out MethodInfo method))
             {
                 Expression callReaderExpr = Expression.Call(context.DataRecordParameterExpr, method, Expression.Constant(context.FieldIndex));
 #if FEATURE_TYPE_INFO
@@ -227,8 +230,10 @@
                 {
                     callReaderExpr = Expression.Convert(callReaderExpr, context.EntityFieldType);
                 }
+
                 return callReaderExpr;
             }
+
             throw new NotSupportedException($"Field of type {context.EntityFieldType} is not supported.");
         }
     }

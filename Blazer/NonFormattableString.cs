@@ -19,7 +19,7 @@ namespace Blazer
 
         public static implicit operator NonFormattableString(FormattableString value)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException($"Conversion from {nameof(FormattableString)} to {nameof(NonFormattableString)} is not supported.");
         }
     }
 }

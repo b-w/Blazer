@@ -58,10 +58,11 @@
 
         public static CancellationToken GetCancellationToken(CommandConfiguration commandConfig)
         {
-            if (commandConfig != null && commandConfig.AsyncCancellationToken.HasValue)
+            if (commandConfig?.AsyncCancellationToken.HasValue == true)
             {
                 return commandConfig.AsyncCancellationToken.Value;
             }
+
             return CancellationToken.None;
         }
     }

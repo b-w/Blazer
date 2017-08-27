@@ -19,7 +19,8 @@
         {
             var loopVarAssignExpr = Expression.Assign(loopVarExpr, loopVarValueExpr);
             var loopBreakLabelExpr = Expression.Label("break");
-            var loopExpr = Expression.Block(
+
+            return Expression.Block(
                 new[] { loopVarExpr },
                 loopVarAssignExpr,
                 Expression.Loop(
@@ -33,7 +34,6 @@
                     ),
                 loopBreakLabelExpr)
             );
-            return loopExpr;
         }
 
         public static Expression ForEach(
@@ -49,11 +49,12 @@
                 enumeratorVarExpr,
                 Expression.Call(
                     collectionExpr,
-                    enumerableType.GetMethod("GetEnumerator")));
-            var moveNextCallExpr = Expression.Call(enumeratorVarExpr, typeof(IEnumerator).GetMethod("MoveNext"));
-            var disposeCallExpr = Expression.Call(enumeratorVarExpr, typeof(IDisposable).GetMethod("Dispose"));
+                    enumerableType.GetMethod(nameof(IEnumerable.GetEnumerator))));
+            var moveNextCallExpr = Expression.Call(enumeratorVarExpr, typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext)));
+            var disposeCallExpr = Expression.Call(enumeratorVarExpr, typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose)));
             var loopBreakLabelExpr = Expression.Label("break");
-            var loopExpr = Expression.Block(
+
+            return Expression.Block(
                 new[] { enumeratorVarExpr },
                 enumeratorAssignExpr,
                 Expression.Loop(
@@ -61,7 +62,7 @@
                         Expression.Equal(moveNextCallExpr, Expression.Constant(true)),
                         Expression.Block(
                             new[] { loopVarExpr },
-                            Expression.Assign(loopVarExpr, Expression.Property(enumeratorVarExpr, "Current")),
+                            Expression.Assign(loopVarExpr, Expression.Property(enumeratorVarExpr, nameof(IEnumerator.Current))),
                             loopBodyExpr
                         ),
                         Expression.Break(loopBreakLabelExpr)
@@ -69,7 +70,6 @@
                 loopBreakLabelExpr),
                 disposeCallExpr
             );
-            return loopExpr;
         }
     }
 }

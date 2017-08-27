@@ -6,12 +6,13 @@
 
     public class SpParameters
     {
-        readonly Dictionary<string, SpParameter> m_params = new Dictionary<string, SpParameter>();
-        SpParameter m_return = null;
+        private readonly Dictionary<string, SpParameter> m_params = new Dictionary<string, SpParameter>();
+        private SpParameter m_return = null;
 
         public void AddInput(string name, object value, DbType? dbType = null, int? size = null, byte? precision = null, byte? scale = null)
         {
             DbType dbTypeValue;
+
             if (dbType.HasValue)
             {
                 dbTypeValue = dbType.Value;
@@ -24,6 +25,7 @@
             {
                 throw new NotSupportedException($"Parameter of type {value.GetType()} is not supported.");
             }
+
             m_params.Add(name, GetSpParam(name, dbTypeValue, ParameterDirection.Input, value, size, precision, scale));
         }
 
@@ -35,6 +37,7 @@
         public void AddInputOutput(string name, object value, DbType? dbType = null, int? size = null, byte? precision = null, byte? scale = null)
         {
             DbType dbTypeValue;
+
             if (dbType.HasValue)
             {
                 dbTypeValue = dbType.Value;
@@ -47,6 +50,7 @@
             {
                 throw new NotSupportedException($"Parameter of type {value.GetType()} is not supported.");
             }
+
             m_params.Add(name, GetSpParam(name, dbTypeValue, ParameterDirection.InputOutput, value, size, precision, scale));
         }
 
@@ -55,7 +59,7 @@
             m_return = GetSpParam(name, dbType, ParameterDirection.ReturnValue, null, size, precision, scale);
         }
 
-        static SpParameter GetSpParam(string name, DbType dbType, ParameterDirection direction, object value, int? size, byte? precision, byte? scale)
+        private static SpParameter GetSpParam(string name, DbType dbType, ParameterDirection direction, object value, int? size, byte? precision, byte? scale)
         {
             var spParam = new SpParameter()
             {
@@ -64,41 +68,39 @@
                 Direction = direction,
                 Value = value
             };
+
             if (size.HasValue)
             {
                 spParam.Size = size.Value;
             }
+
             if (precision.HasValue)
             {
                 spParam.Precision = precision.Value;
             }
+
             if (scale.HasValue)
             {
                 spParam.Scale = scale.Value;
             }
+
             return spParam;
         }
 
-        internal IEnumerable<SpParameter> Parameters
-        {
-            get { return m_params.Values; }
-        }
+        internal IEnumerable<SpParameter> Parameters => m_params.Values;
 
-        internal SpParameter ReturnParameter
-        {
-            get { return m_return; }
-        }
+        internal SpParameter ReturnParameter => m_return;
 
         public T GetOutputValue<T>(string name)
         {
-            SpParameter spParam;
-            if (m_params.TryGetValue(name, out spParam))
+            if (m_params.TryGetValue(name, out SpParameter spParam))
             {
                 var outputValue = spParam.Value;
                 if (outputValue == DBNull.Value)
                 {
                     return default(T);
                 }
+
                 return (T)outputValue;
             }
 
@@ -114,6 +116,7 @@
                 {
                     return default(T);
                 }
+
                 return (T)returnValue;
             }
 

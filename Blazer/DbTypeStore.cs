@@ -9,7 +9,7 @@
 
     internal static class DbTypeStore
     {
-        static readonly ConcurrentDictionary<Type, DbType> m_typeMap = new ConcurrentDictionary<Type, DbType>()
+        private static readonly ConcurrentDictionary<Type, DbType> m_typeMap = new ConcurrentDictionary<Type, DbType>()
         {
             [typeof(string)] = DbType.String,
             [typeof(char)] = DbType.StringFixedLength,
@@ -37,10 +37,12 @@
         {
             var type = forType;
             var nullableType = Nullable.GetUnderlyingType(type);
+
             if (nullableType != null)
             {
                 type = nullableType;
             }
+
 #if FEATURE_TYPE_INFO
             if (type.GetTypeInfo().IsEnum && !m_typeMap.ContainsKey(type))
 #else
@@ -49,12 +51,10 @@
             {
                 type = Enum.GetUnderlyingType(type);
             }
+
             return m_typeMap.TryGetValue(type, out dbType);
         }
 
-        public static void RegisterType(Type type, DbType dbType)
-        {
-            m_typeMap.AddOrUpdate(type, dbType, (key, oldValue) => dbType);
-        }
+        public static void RegisterType(Type type, DbType dbType) => m_typeMap.AddOrUpdate(type, dbType, (key, oldValue) => dbType);
     }
 }

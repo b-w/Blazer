@@ -339,7 +339,7 @@ namespace Blazer
                     }
                 }
 
-                await cmd.ExecuteNonQueryAsync(cancelToken);
+                await cmd.ExecuteNonQueryAsync(cancelToken).ConfigureAwait(false);
 
                 if (paramPairs.Count > 0)
                 {
