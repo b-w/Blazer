@@ -55,6 +55,14 @@ return m_conn.QuerySingle<TransactionHistory>(
     );
 ```
 
+Or, if your project is `>= .Net 4.6` or `>= .Net Standard 1.3`, you can use string interpolation to do this:
+
+```csharp
+return m_conn.QuerySingle<TransactionHistory>(
+      $"SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = {42}"
+    );
+```
+
 ## Design Goals
 
 Blazer's primary features are:
@@ -223,6 +231,40 @@ With the exception of `StoredProcedure`, all Blazer `IDbConnection` functions ha
 *(optional)* `parameters` contains the command parameters. You'll most likely just want to use an anonymous type for this, although this is not a requirement. Any type can be used, though only `Public Instance` properties of the type can be used as parameter values. For the conventions Blazer uses to map properties of the parameter object to `IDataParameter`s on a command, see the *Mapping conventions* section.
 
 *(optional)* `config` contains some configuration options to use for the command. It can contain things like the command timeout or `IDbTransaction` to use. If `null` is passed here, Blazer falls back to its default configuration options. The defaults can be accessed through `CommandConfiguration.Default`. When a `config` value is provided, not all options on it are necessarily set. A second option, `CommandConfiguration.OnUnsetConfigurationOption`, controls how Blazer deals with this situation.
+
+### async/await
+
+For any target platform that supports `async/await`, Blazer's various functions contain a matching `...Async()` version to support asynchonous programming patterns.
+
+### String interpolation
+
+Starting with .Net 4.6 and .Net Standard 1.3, Blazer supports string interpolation as an alternative way of passing parameters to queries. For this, Blazer's `IDbConnection` functions contain an overload of shape `(FormattableString commandString, CommandConfiguration config = null)`, combining the command string and the parameters in one argument.
+
+So, instead of doing something like this:
+
+```csharp
+someConnection.Query("SELECT * FROM Foo WHERE Bar = @Bar", new { Bar = 42 });
+```
+
+...you can just do this:
+
+```csharp
+someConnection.Query($"SELECT * FROM Foo WHERE Bar = {42}");
+```
+
+Blazer will intercept the interpolated string and its argument values, and uses them to produce a parameterized SQL query (as it would for regular string queries).
+
+In the SQL profiler, this first query produces the following:
+
+```sql
+exec sp_executesql N'SELECT * FROM Foo WHERE Bar = @Bar',N'@Bar int',@Bar=42
+```
+
+...while the second query produces this:
+
+```sql
+exec sp_executesql N'SELECT * FROM Foo WHERE Bar = @p__blazer__0',N'@p__blazer__0 int',@p__blazer__0=42
+```
 
 ## Performance
 
@@ -483,6 +525,8 @@ In this case two parameters named `@CategoryId` and `@YearStart` will be added t
 
 Blazer does not attempt to parse the command string to see if each parameter is actually used. All properties in the input parameter object will be blindly added as command parameters.
 
+**Note**: when using Blazer's string interpolation functions, none of the above is applicable as Blazer just generates its own parameter names, and adds parameters automatically for each string interpolation argument. So in that case you don't have to worry about any of this :)
+
 ### Output parameters
 
 In the case of typed query results, Blazer performs mapping from the columns of the query result set to fields on the result type. To do this it attempts to find a matching field for each column of the result set, using a couple of simple matching rules that are attempted in sequence.
@@ -501,4 +545,4 @@ See [LICENSE.txt](https://github.com/b-w/Blazer/blob/master/LICENSE.txt)
 
 ## Copyright
 
-Blazer is copyright (c) 2016 Bart Wolff, [www.bartwolff.com]()
+Blazer is copyright (c) 2017 Bart Wolff, [www.bartwolff.com]()
