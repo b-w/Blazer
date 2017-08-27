@@ -415,6 +415,12 @@
       <DependentUpon>L2SModel.dbml</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Blazer\Blazer.csproj">
+      <Project>{7c527f36-17fd-46f8-82dd-f52542d8d9fd}</Project>
+      <Name>Blazer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

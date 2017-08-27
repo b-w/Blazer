@@ -149,6 +149,56 @@
         }
     }
 
+    public class BlazerSingleSelectManyTimesTestF : TestBase
+    {
+        IDbConnection m_conn;
+        readonly int m_count;
+
+        public BlazerSingleSelectManyTimesTestF(int count) : base($"Blazer [F]: SELECT 1 record, {count:N0} times")
+        {
+            m_count = count;
+        }
+
+        protected override void Warmup()
+        {
+            m_conn = TestResources.GetAdventureWorksConnection();
+            m_conn.Open();
+            var orderDetails = m_conn.Query<TransactionHistory>("SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] < 100010")
+                .ToList();
+            if (orderDetails.Count == 0)
+            {
+                throw new ApplicationException();
+            }
+        }
+
+        protected override void DoWork()
+        {
+            var rng = new Random();
+            for (int i = 0; i < m_count; i++)
+            {
+                var transaction = m_conn.QuerySingle<TransactionHistory>(
+                    $"SELECT * FROM [Production].[TransactionHistory] WHERE [TransactionID] = {rng.Next(100000, 200000)}");
+                if (transaction != null && transaction.ProductID <= 0)
+                {
+                    throw new ApplicationException();
+                }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!m_disposed)
+            {
+                if (disposing)
+                {
+                    m_conn.Close();
+                    m_conn.Dispose();
+                }
+                m_disposed = true;
+            }
+        }
+    }
+
     public class BlazerSingleDynamicSelectManyTimesTest : TestBase
     {
         IDbConnection m_conn;

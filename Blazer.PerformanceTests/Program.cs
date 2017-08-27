@@ -20,15 +20,16 @@
             {
                 //TestHandCrafted(sw);
                 TestBlazer(sw);
+                TestBlazerFormattableString(sw);
                 //TestL2S(sw);
                 //TestL2SCC(sw);
                 //TestEF(sw);
                 //TestEFCC(sw);
-                TestDapper(sw);
+                //TestDapper(sw);
                 //TestOrmLite(sw);
-                TestPetaPoco(sw);
-                TestSimpleData(sw);
-                TestMassive(sw);
+                //TestPetaPoco(sw);
+                //TestSimpleData(sw);
+                //TestMassive(sw);
             }
 
             Console.WriteLine();
@@ -63,15 +64,22 @@
             //RunTest(() => new BlazerSelectTest(500), resultStream);
             //RunTest(() => new BlazerSelectTest(5000), resultStream);
             //RunTest(() => new BlazerSelectTest(50000), resultStream);
-            RunTest(() => new BlazerDynamicSelectTest(500), resultStream);
-            RunTest(() => new BlazerDynamicSelectTest(5000), resultStream);
-            RunTest(() => new BlazerDynamicSelectTest(50000), resultStream);
-            //RunTest(() => new BlazerSingleSelectManyTimesTest(500), resultStream);
-            //RunTest(() => new BlazerSingleSelectManyTimesTest(5000), resultStream);
+            //RunTest(() => new BlazerDynamicSelectTest(500), resultStream);
+            //RunTest(() => new BlazerDynamicSelectTest(5000), resultStream);
+            //RunTest(() => new BlazerDynamicSelectTest(50000), resultStream);
+            RunTest(() => new BlazerSingleSelectManyTimesTest(500), resultStream);
+            RunTest(() => new BlazerSingleSelectManyTimesTest(5000), resultStream);
             //RunTest(() => new BlazerSingleSelectManyTimesTest(50000), resultStream);
             //RunTest(() => new BlazerSingleDynamicSelectManyTimesTest(500), resultStream);
             //RunTest(() => new BlazerSingleDynamicSelectManyTimesTest(5000), resultStream);
             //RunTest(() => new BlazerSingleDynamicSelectManyTimesTest(50000), resultStream);
+        }
+
+        static void TestBlazerFormattableString(TextWriter resultStream)
+        {
+            Console.WriteLine("Testing: Blazer (opt FormattableString)");
+            RunTest(() => new BlazerSingleSelectManyTimesTestF(500), resultStream);
+            RunTest(() => new BlazerSingleSelectManyTimesTestF(5000), resultStream);
         }
 
         static void TestL2S(TextWriter resultStream)
